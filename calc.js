@@ -454,7 +454,9 @@
       if (spouseLU) {
         /* imposition collective des deux salaires luxembourgeois */
         var selfR = assessment(Object.assign({}, a, { aep: 0, mortgageInterest: 0, specialExpenses: 0 })).R;
-        var R = Math.max(0, selfR + spouseR - Math.max(0, (insurance + extraSpecial) - P.lu.forfaits.ds) - (withMortgage ? mortgage : 0) - aep);
+        /* selfR et spouseR ont déjà retiré chacun le forfait de 480 € : le forfait du ménage est donc de 2 × 480 € */
+        var dsForfait = 2 * P.lu.forfaits.ds;
+        var R = Math.max(0, selfR + spouseR - Math.max(0, (insurance + extraSpecial) - dsForfait) - (withMortgage ? mortgage : 0) - aep);
         var tax = taxFull(R, 2);
         var credits = cisAnnual(a.grossMonthly * 12 + bonus) + cico2Annual(a.grossMonthly * 12 + bonus) + cissmMonthly(gm) * 12
                     + cisAnnual(spouseIncome) + cico2Annual(spouseIncome) + cissmMonthly(spouseIncome / 12) * 12;

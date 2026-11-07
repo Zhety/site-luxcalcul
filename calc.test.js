@@ -137,5 +137,32 @@ console.log('--- Coût employeur (CCSS, avis du 16.01.2026)');
   const b = DC.bonusTax(9000, 9000, 1, 30, {});
   near('13e mois à 9 000 € : cotisations limitées au plafond mensuel', b.contribs.deductible, (13856.65 - 9000) * 0.1155, 0.01);
 }
+
+console.log('--- Couple, deux salaires luxembourgeois : forfait dépenses spéciales 2 × 480 €');
+{
+  const o = DC.diagnostic({ residence: 'FR', km: 30, salary: 5200, months: 12, yFR: 9, yLU: 12, avgFR: 2500, age: 41, family: 'couple', kids: 1, spouseCountry: 'LU', spouseIncome: 4000, home: 'tenant' });
+  near('revenu imposable du ménage', o.tax.declareOnly.R, 84904.80, 0.01);
+  near('impôt classe 2', o.tax.declareOnly.tax, 10512.90, 0.01);
+}
+
+console.log('--- Chiffres écrits dans les pages = moteur');
+{
+  const fs = require('fs'), path = require('path');
+  const fmt = n => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/ /g, ' ');
+  const page = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+  const cells = [...page.matchAll(/data-g="([\d.]+)" data-c="(\w+)">([^<]+) €</g)];
+  if (cells.length < 10) { fails++; console.log('ÉCHEC  tableau d\'exemples introuvable'); }
+  cells.forEach(m => {
+    const net = DC.payslip(+m[1], m[2] === '1a' ? '1a' : +m[2], 0, {}).net;
+    if (fmt(net) !== m[3]) { fails++; console.log('ÉCHEC  exemple ' + m[1] + ' € classe ' + m[2] + ' : page ' + m[3] + ', moteur ' + fmt(net)); }
+  });
+  console.log('ok     ' + cells.length + ' cellules du tableau d\'exemples');
+  const quoted = [[4000, 1, 0], [4000, 2, 0], [4000, 1, 30], [2771.33, 1, 0], [3325.6, 1, 0]];
+  quoted.forEach(([g, c, km]) => {
+    const v = fmt(DC.payslip(g, c, km, {}).net);
+    if (!page.includes(v + ' €')) { fails++; console.log('ÉCHEC  FAQ : ' + v + ' € absent de la page (' + g + ' €, classe ' + c + ', ' + km + ' km)'); }
+  });
+  console.log('ok     montants cités dans la FAQ');
+}
 console.log(fails ? ('\n' + fails + ' ÉCHEC(S)') : '\nTous les contrôles passent.');
 process.exit(fails ? 1 : 0);
