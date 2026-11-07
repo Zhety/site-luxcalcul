@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Brut net Luxembourg</title>
+<meta name="description" content="Estimateur de salaire net luxembourgeois 2026 ligne par ligne : cotisations CCSS, retenue d'impôt selon la fiche (classe, taux global, fiche additionnelle), crédits d'impôt, 13ᵉ mois, avantage en nature. Méthode de l'Administration des contributions directes.">
+<meta name="theme-color" content="#F1F3F7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="index.html"><i aria-hidden="true"></i>Deux Côtés</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="index.html#diagnostic">Diagnostic</a>
+      <a href="salaire.html" aria-current="page">Brut → net</a>
+      <a href="index.html#sources">Méthode</a>
+      <a href="index.html#questions">Questions</a>
+    </nav>
+    <a class="btn small" href="index.html#diagnostic">Prendre rendez-vous</a>
+  </div>
+</header>
+
+<section class="hero sm">
+  <div class="wrap">
+    <p class="eyebrow">Estimateur · fiche de paie luxembourgeoise 2026</p>
+    <h1 style="margin-top:18px">Votre brut, <mark>ligne par ligne</mark>.</h1>
+    <p class="lede">Cotisations CCSS, retenue d'impôt selon votre fiche, crédits d'impôt, 13ᵉ mois, avantage en nature. La méthode de l'Administration des contributions directes, avec les paramètres en vigueur au 1ᵉʳ juin 2026.</p>
+  </div>
+</section>
+
+<section class="estim" id="estimateur">
+  <div class="wrap">
+    <div class="panel estim-grid">
+
+      <form class="estim-in" id="form" novalidate>
+        <div class="field">
+          <label for="salary">Salaire brut mensuel</label>
+          <div class="bigval"><input id="salary" type="number" inputmode="numeric" min="1000" max="30000" step="50" value="4800"><span class="u">€ / mois</span></div>
+          <input id="salaryR" type="range" min="1000" max="15000" step="50" value="4800" aria-label="Salaire brut mensuel">
+          <div class="scale num"><span>1 000</span><span>SSM 2 771</span><span>15 000+</span></div>
+        </div>
+
+        <div class="field">
+          <span class="lab">Où habitez-vous&nbsp;?</span>
+          <div class="choices compact row2" role="group" aria-label="Résidence">
+            <button type="button" class="choice" data-k="res" data-v="NR" aria-pressed="true"><span>Frontalier, non-résident</span></button>
+            <button type="button" class="choice" data-k="res" data-v="R" aria-pressed="false"><span>Résident luxembourgeois</span></button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="lab">Votre fiche de retenue d'impôt</span>
+          <div class="choices compact" role="group" aria-label="Fiche de retenue, non-résident" id="clsNR">
+            <button type="button" class="choice" data-k="cls" data-v="1" aria-pressed="true"><span>Classe 1 — célibataire, ou marié sans demande particulière</span></button>
+            <button type="button" class="choice" data-k="cls" data-v="1a" aria-pressed="false"><span>Classe 1a — parent isolé, veuf, plus de 64 ans</span></button>
+            <button type="button" class="choice" data-k="cls" data-v="2g" aria-pressed="false"><span>Taux global — marié, assimilation demandée pour le ménage</span></button>
+          </div>
+          <div class="choices compact" role="group" aria-label="Fiche de retenue, résident" id="clsR" hidden>
+            <button type="button" class="choice" data-k="cls" data-v="1" aria-pressed="false"><span>Classe 1 — célibataire</span></button>
+            <button type="button" class="choice" data-k="cls" data-v="1a" aria-pressed="false"><span>Classe 1a — parent isolé, veuf, plus de 64 ans</span></button>
+            <button type="button" class="choice" data-k="cls" data-v="2" aria-pressed="false"><span>Classe 2, fiche principale — marié, le salaire le plus élevé du ménage</span></button>
+            <button type="button" class="choice" data-k="cls" data-v="2add" aria-pressed="false"><span>Classe 2, fiche additionnelle — marié, second salaire du ménage, retenue fixe de 15 %</span></button>
+          </div>
+          <p class="scale" id="clsHint"><span></span></p>
+          <div class="field sub" id="spouseWrap" hidden>
+            <span class="lab">Revenus du conjoint</span>
+            <div class="choices compact" role="group" aria-label="Revenus du conjoint">
+              <button type="button" class="choice" data-k="sp" data-v="LU" aria-pressed="true"><span>Salarié au Luxembourg</span></button>
+              <button type="button" class="choice" data-k="sp" data-v="FR" aria-pressed="false"><span>Revenus hors Luxembourg</span></button>
+              <button type="button" class="choice" data-k="sp" data-v="none" aria-pressed="false"><span>Sans revenu</span></button>
+            </div>
+            <div class="minival" id="spouseLUWrap" style="margin-top:14px"><input id="spouseGross" type="number" inputmode="numeric" min="0" max="30000" step="50" value="3500"><span class="u">€ brut / mois, même nombre de mois que vous</span></div>
+            <div class="minival" id="spouseFRWrap" style="margin-top:14px" hidden><input id="spouseAnnual" type="number" inputmode="numeric" min="0" max="500000" step="500" value="24000"><span class="u">€ net imposable / an</span></div>
+            <p class="scale"><span>Le taux global est l'impôt de classe 2 sur le revenu mondial du ménage, rapporté à ce revenu. Il est inscrit sur les deux fiches et régularisé par la déclaration annuelle.</span></p>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <span class="lab">Nombre de mois payés</span>
+            <div class="choices compact" role="group" aria-label="Nombre de mois">
+              <button type="button" class="choice" data-k="months" data-v="13" aria-pressed="true"><span>13 mois</span></button>
+              <button type="button" class="choice" data-k="months" data-v="12" aria-pressed="false"><span>12 mois</span></button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="km">Distance domicile – travail, à vol d'oiseau</label>
+            <div class="kmrow"><input id="km" type="range" min="0" max="60" step="1" value="30" aria-label="Distance en kilomètres"><output class="num" id="kmo">30<em>km</em></output></div>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="atn">Avantage en nature, voiture de société</label>
+            <div class="minival"><input id="atn" type="number" inputmode="numeric" min="0" max="5000" step="10" value="0"><span class="u">€ / mois</span></div>
+          </div>
+          <div class="field">
+            <label for="extraDS">Déductions inscrites sur la fiche</label>
+            <div class="minival"><input id="extraDS" type="number" inputmode="numeric" min="0" max="5000" step="10" value="0"><span class="u">€ / mois</span></div>
+          </div>
+        </div>
+        <p class="scale"><span>L'avantage en nature est cotisable et imposable mais n'est pas versé. Les déductions inscrites sont celles que l'ACD a portées sur votre fiche, en plus des forfaits déjà dans le barème.</span></p>
+      </form>
+
+      <div class="estim-out">
+        <p class="eyebrow" id="slipTitle">Fiche de paie d'un mois ordinaire</p>
+        <table class="slip num" aria-label="Détail de la fiche de paie">
+          <tbody id="slip"></tbody>
+        </table>
+        <div class="kpis">
+          <div class="kpi"><b class="num" id="kNet">—</b><small>net versé par mois</small></div>
+          <div class="kpi"><b class="num" id="kRate">—</b><small>retenue d'impôt rapportée au brut</small></div>
+          <div class="kpi"><b class="num" id="kYear">—</b><small id="kYearL">net sur l'année, 13ᵉ mois compris</small></div>
+        </div>
+        <div class="cmp">
+          <p class="eyebrow">Même brut, autre fiche</p>
+          <table aria-label="Net selon la fiche de retenue">
+            <thead><tr><th>Fiche</th><th>Retenue</th><th>Net mensuel</th><th>Écart</th></tr></thead>
+            <tbody id="cmp"></tbody>
+          </table>
+        </div>
+        <div class="cmp" id="employer">
+          <p class="eyebrow">Coût employeur, secteur privé</p>
+          <div class="row2" style="margin-top:12px">
+            <div class="field"><label for="accident">Assurance accident, facteur bonus-malus</label><select id="accident" class="sel"><option value="0.85">0,85 — taux 0,5525 %</option><option value="1" selected>1,00 — taux 0,650 %</option><option value="1.1">1,10 — taux 0,715 %</option><option value="1.3">1,30 — taux 0,845 %</option><option value="1.5">1,50 — taux 0,975 %</option></select></div>
+            <div class="field"><label for="mutual">Mutualité des employeurs, classe</label><select id="mutual" class="sel"><option value="1">Classe 1 — 0,23 %</option><option value="2" selected>Classe 2 — 0,95 %</option><option value="3">Classe 3 — 1,56 %</option><option value="4">Classe 4 — 2,66 %</option></select></div>
+          </div>
+          <label class="consent" style="margin-top:12px"><input id="stm" type="checkbox" checked><span>Employeur affilié au Service de santé au travail multisectoriel, 0,14 %</span></label>
+          <table class="slip num" aria-label="Coût employeur"><tbody id="emp"></tbody></table>
+          <p class="scale" style="margin-top:10px"><span>Ces trois paramètres sont propres à chaque employeur et n'apparaissent pas sur votre fiche de paie. Le facteur bonus-malus est notifié chaque début d'année par l'Association d'assurance accident, d'après les accidents de l'entreprise comparés à son secteur : 1,00 signifie ni bonus ni malus. La classe de la Mutualité dépend de l'absentéisme des trois années précédentes, un nouvel employeur démarre en classe 2. L'affiliation au STM se reconnaît au service qui vous convoque à la visite médicale : STM pour la plupart des entreprises, STI pour l'industrie, ASTF pour la place financière. Sans l'information, gardez les valeurs par défaut ou demandez aux ressources humaines.</span></p>
+          <p class="scale" style="margin-top:8px"><span>Cotisations patronales sur la même base plafonnée que les vôtres. La cotisation pour prestations familiales de 1,70 % ne concerne que le secteur public. Le véhicule de société coûte son loyer à l'employeur, pas l'avantage en nature.</span></p>
+        </div>
+        <p class="method-link" style="margin-top:18px">Méthode : base arrondie au multiple de 5 € inférieur, retenue arrondie aux 10 centimes inférieurs, forfaits 540 € et 480 € intégrés au barème, taux et plafonds au 1ᵉʳ juin 2026. Détail et sources dans la <a href="index.html#sources">méthode de calcul</a>.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="sources">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Paramètres utilisés</p>
+      <h2 style="margin-top:12px">Ce qui entre dans le calcul.</h2>
+      <p class="intro">Les mêmes constantes que le pré-diagnostic, vérifiées le 4 novembre 2026. Ce que l'estimateur ne fait pas : heures supplémentaires, temps partiel, chèques-repas, fiche additionnelle pour un second emploi.</p>
+    </div>
+    <div>
+      <table class="ptable">
+        <thead><tr><th>Paramètre</th><th>Valeur 2026</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>Cotisations salarié</td><td>maladie 2,80 % + 0,25 %, pension 8,50 %, plafond 13 856,65 € ; dépendance 1,40 % sur le brut après abattement de 692,83 €, sans plafond, non déductible</td><td><a href="https://ccss.public.lu/dam-assets/publications/2026/ccss-20260116-avis-80-99-fr-de.pdf">CCSS</a> · <a href="https://itm.public.lu/fr/questions-reponses/droit-travail/remuneration/a/a3.html">ITM</a></td></tr>
+          <tr><td>Retenue d'impôt</td><td>barème annuel 2025 reconduit en 2026 ramené au mois, fonds pour l'emploi 7 % ; classe 1a selon l'article 120bis, classe 2 par fractionnement</td><td><a href="https://impotsdirects.public.lu/fr/az/t/tarif_pers.html">ACD</a> · <a href="https://impotsdirects.public.lu/fr/salpens/calcul_rem.html">exemple ACD</a></td></tr>
+          <tr><td>Classes des non-résidents</td><td>mariés : classe 1 par défaut depuis 2018, chacun sur son salaire ; sur demande conjointe et sous condition d'assimilation (article 157ter), un taux global de classe 2 sur le revenu mondial du ménage remplace la classe sur les deux fiches</td><td><a href="https://impotsdirects.public.lu/fr/az/c/class_nonresid.html">ACD</a> · <a href="https://impotsdirects.public.lu/fr/az/a/assimil.html">assimilation</a></td></tr>
+          <tr><td>Classes des résidents</td><td>mariés : imposition collective en classe 2 ; fiche principale au salaire le plus élevé, fiche additionnelle du conjoint avec un taux fixe de 15 % (21 % en classe 1a, 33 % en classe 1), régularisation par la déclaration</td><td><a href="https://impotsdirects.public.lu/fr/az/c/class_resid.html">ACD</a> · <a href="https://impotsdirects.public.lu/fr/az/t/Taux_de_retenue_inscrit_sur_la_fiche_de_retenue_d_imp__t_additionnelle.html">taux fixe</a> · <a href="https://guichet.public.lu/fr/entreprises/ressources-humaines/remuneration/fiche-retenue-impot/obtention-fiche-impot.html">Guichet</a></td></tr>
+          <tr><td>Frais de déplacement</td><td>99 € par kilomètre au-delà du 4ᵉ, 26 unités au plus, soit 2 574 € par an</td><td><a href="https://impotsdirects.public.lu/fr/az/f/frais_salar.html">ACD</a></td></tr>
+          <tr><td>Crédits d'impôt</td><td>CIS 600 € par an jusqu'à 40 000 € de brut annuel puis dégressif jusqu'à 80 000 € ; CI-CO2 216 € ; CISSM 81 € par mois entre 1 800 et 3 000 € puis dégressif jusqu'à 3 600 € ; CIM 3 504 € en classe 1a ; crédit d'impôt conjoncture de juin à décembre 2026</td><td><a href="https://impotsdirects.public.lu/fr/az/c/credit-impot-salaries/cis2026.html">ACD CIS 2026</a> · <a href="https://impotsdirects.public.lu/fr/az/c/cim/cim2025.html">CIM</a> · <a href="https://securex.lu/my-hr-update-juillet-2026/">CIC</a></td></tr>
+          <tr><td>13ᵉ mois</td><td>rémunération non périodique : cotisations au taux normal dans la limite du plafond mensuel, retenue égale à la différence d'impôt annuel avec et sans la prime, ou au taux de la fiche</td><td><a href="https://impotsdirects.public.lu/fr/salpens/charg_grat.html">ACD</a></td></tr>
+          <tr><td>Cotisations employeur</td><td>maladie 2,80 % + 0,25 %, pension 8,50 %, accident 0,650 % × facteur bonus-malus de 0,85 à 1,50, Mutualité des employeurs 0,23 % à 2,66 % selon la classe d'absentéisme, santé au travail 0,14 % pour les affiliés au STM ; prestations familiales 1,70 % dans le secteur public seulement ; même plafond de 5 × SSM</td><td><a href="https://ccss.public.lu/dam-assets/publications/2026/ccss-20260116-avis-80-99-fr-de.pdf">CCSS, avis du 16 janvier 2026</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Deux Côtés · Thionville</span>
+    <div class="links"><a href="#">Mentions légales</a><a href="#">Confidentialité</a><a href="#">Devenir expert partenaire</a></div>
+  </div>
+</footer>
+
+<script src="calc.js"></script>
+<script>
+(function(){
+  var S = { salary:4800, res:"NR", cls:"1", sp:"LU", spouseGross:3500, spouseAnnual:24000, months:13, km:30, atn:0, extraDS:0 };
+  var $ = function(id){ return document.getElementById(id); };
+  var f2 = function(n){ return n.toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var f0 = function(n){ return Math.round(n).toLocaleString("fr-FR"); };
+  var pc = function(x,d){ return x.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}); };
+  var P = DC.P.lu;
+  var LABELS = { "1":"Classe 1", "1a":"Classe 1a", "2":"Classe 2, fiche principale", "2add":"Classe 2, fiche additionnelle", "2g":"Taux global" };
+  var HINTS = {
+    NR: "Marié et non-résident, vous êtes en classe 1 par défaut, chacun sur son salaire, même si votre conjoint travaille aussi au Luxembourg. Le taux global s'obtient sur demande conjointe, si au moins 90 % de vos revenus sont luxembourgeois.",
+    R: "Marié et résident, vous êtes imposés ensemble en classe 2 : le salaire le plus élevé du ménage porte la fiche principale, l'autre une fiche additionnelle à 15 %. La déclaration annuelle fait le compte exact."
+  };
+
+  function setPressed(k, v){
+    document.querySelectorAll('.choice[data-k="'+k+'"]').forEach(function(x){ x.setAttribute("aria-pressed", x.dataset.v===v ? "true" : "false"); });
+  }
+  document.querySelectorAll(".choice").forEach(function(b){
+    b.addEventListener("click", function(){
+      var k=b.dataset.k, v=b.dataset.v;
+      S[k] = k==="months" ? +v : v;
+      if(k==="res"){ S.cls = v==="R" && S.cls==="2g" ? "2" : (v==="NR" && (S.cls==="2"||S.cls==="2add") ? "2g" : S.cls); }
+      setPressed(k, String(S[k])); setPressed("cls", S.cls);
+      render();
+    });
+  });
+  function pair(numId, rangeId, key, min, max){
+    var n=$(numId), r=$(rangeId);
+    n.addEventListener("input", function(){ var v=+n.value; if(!isNaN(v)&&v>0){ S[key]=v; r.value=Math.min(max,Math.max(min,v)); render(); } });
+    n.addEventListener("blur", function(){ var v=Math.min(+n.max,Math.max(+n.min,+n.value||min)); n.value=v; S[key]=v; r.value=Math.min(max,Math.max(min,v)); render(); });
+    r.addEventListener("input", function(){ S[key]=+r.value; n.value=r.value; render(); });
+  }
+  pair("salary","salaryR","salary",1000,15000);
+  function numeric(id,key){
+    var n=$(id);
+    n.addEventListener("input", function(){ var v=+n.value; if(!isNaN(v)){ S[key]=Math.max(0,v); render(); } });
+    n.addEventListener("blur", function(){ var v=Math.min(+n.max,Math.max(+n.min,+n.value||0)); n.value=v; S[key]=v; render(); });
+  }
+  numeric("atn","atn"); numeric("extraDS","extraDS"); numeric("spouseGross","spouseGross"); numeric("spouseAnnual","spouseAnnual");
+  $("km").addEventListener("input", function(){ S.km=+$("km").value; $("kmo").innerHTML=S.km+"<em>km</em>"; render(); });
+  $("form").addEventListener("submit", function(e){ e.preventDefault(); });
+  var E = { accidentFactor:1, mutualityClass:2, stm:true };
+  $("accident").addEventListener("change", function(){ E.accidentFactor=+this.value; render(); });
+  $("mutual").addEventListener("change", function(){ E.mutualityClass=+this.value; render(); });
+  $("stm").addEventListener("change", function(){ E.stm=this.checked; render(); });
+
+  function renderEmployer(netMonth, netYear){
+    var e = DC.P.lu.employer;
+    var m = DC.employerCost(S.salary, { atn:S.atn, accidentFactor:E.accidentFactor, mutualityClass:E.mutualityClass, stm:E.stm });
+    var bonus = S.months===13 ? S.salary : 0;
+    var dec = bonus ? DC.employerCost(S.salary + bonus, { atn:S.atn, accidentFactor:E.accidentFactor, mutualityClass:E.mutualityClass, stm:E.stm }) : null;
+    var yearContrib = m.contributions*12 + (dec ? dec.contributions - m.contributions : 0);
+    var yearCost = S.salary*S.months + yearContrib;
+    var h = "";
+    h += row("Salaire brut versé", m.cash, "muted");
+    h += row("Assurance maladie, soins "+pc(e.healthCare*100,2)+" %", m.lines.healthCare);
+    h += row("Assurance maladie, espèces "+pc(e.healthCash*100,2)+" %", m.lines.healthCash);
+    h += row("Assurance pension "+pc(e.pension*100,2)+" %", m.lines.pension, null, m.gross>DC.P.lu.capMonthly ? "sur le plafond cotisable de "+f2(DC.P.lu.capMonthly)+" €" : null);
+    h += row("Assurance accident "+pc(e.accidentBase*100*m.factor,4)+" %", m.lines.accident, null, "taux de base 0,650 % × facteur "+pc(m.factor,2));
+    h += row("Mutualité des employeurs, classe "+m.mutualityClass+", "+pc(e.mutuality[m.mutualityClass]*100,2)+" %", m.lines.mutuality);
+    if(m.lines.occupationalHealth>0) h += row("Santé au travail "+pc(e.occupationalHealth*100,2)+" %", m.lines.occupationalHealth);
+    h += row("Coût employeur du mois", m.cost, "total", pc(m.rate*100,2)+" % de cotisations patronales ; sur l'année "+f0(yearCost)+" € pour "+f0(netYear)+" € nets versés, soit "+pc(100*netYear/yearCost,1)+" %");
+    $("emp").innerHTML = h;
+  }
+
+  /* revenu imposable annuel du conjoint, pour le taux global */
+  function spouseTaxable(){
+    if(S.sp==="none") return 0;
+    if(S.sp==="FR") return S.spouseAnnual;
+    var s = DC.payslip(S.spouseGross, 2, S.km, {});
+    var bonus = S.months===13 ? Math.max(0, S.spouseGross - DC.contribs(S.spouseGross).deductible) : 0;
+    return s.annualR + bonus;
+  }
+  function compute(key){
+    var cls = key==="2g" || key==="2add" ? 2 : (key==="1a" ? "1a" : +key);
+    var opts = { atn:S.atn, extraDS:S.extraDS, cim: key==="1a" };
+    var bonus = S.months===13 ? S.salary : 0;
+    if(key==="2g"){
+      var ref = DC.payslip(S.salary, 2, S.km, { atn:S.atn, extraDS:S.extraDS });
+      var bonusTaxable = bonus ? Math.max(0, bonus - DC.contribs(bonus).deductible) : 0;
+      opts.rate = DC.tauxGlobal(ref.annualR + bonusTaxable, spouseTaxable());
+    }
+    if(key==="2add"){ opts.rate = 0.15; opts.flat = true; }
+    var slip = DC.payslip(S.salary, cls, S.km, opts);
+    var bt = bonus ? DC.bonusTax(S.salary, bonus, cls, S.km, opts) : null;
+    return { key:key, slip:slip, bonus:bt, year: slip.net*12 + (bt ? bt.net : 0) };
+  }
+
+  function row(label, amount, cls, sub){
+    var sign = amount<0 ? '− ' : (amount>0 && !cls ? '+ ' : '');
+    return '<tr'+(cls?' class="'+cls+'"':'')+'><td>'+label+(sub?'<small>'+sub+'</small>':'')+'</td><td>'+sign+f2(Math.abs(amount))+'</td></tr>';
+  }
+
+  function render(){
+    $("clsNR").hidden = S.res!=="NR"; $("clsR").hidden = S.res!=="R";
+    $("clsHint").firstChild.textContent = HINTS[S.res];
+    $("spouseWrap").hidden = S.cls!=="2g";
+    $("spouseLUWrap").hidden = S.sp!=="LU"; $("spouseFRWrap").hidden = S.sp!=="FR";
+    var r = compute(S.cls), s = r.slip, c = s.contribs, rates = P.rates;
+    var units = Math.max(0, Math.min(P.fd.maxUnits, Math.round(S.km)) - P.fd.freeUnits);
+    var h = "";
+    h += row("Salaire brut", s.cash, "muted");
+    if(s.atn>0) h += row("Avantage en nature", s.atn, "muted", "cotisable et imposable, non versé");
+    if(s.atn>0) h += row("Rémunération brute", s.gross, "sum");
+    h += row("Assurance maladie, soins "+pc(rates.healthCare*100,2)+" %", -Math.min(s.gross,P.capMonthly)*rates.healthCare);
+    h += row("Assurance maladie, espèces "+pc(rates.healthCash*100,2)+" %", -Math.min(s.gross,P.capMonthly)*rates.healthCash);
+    h += row("Assurance pension "+pc(rates.pension*100,2)+" %", -c.pension, null, s.gross>P.capMonthly ? "sur le plafond cotisable de "+f2(P.capMonthly)+" €" : null);
+    h += row("Frais de déplacement", -s.fd, null, units+" unité"+(units>1?"s":"")+" × 99 € / 12");
+    if(s.extraDS>0) h += row("Déductions inscrites sur la fiche", -s.extraDS);
+    h += row("Base de la retenue, arrondie à 5 €", s.base, "sum", S.cls==="2add" ? "semi-net, sans forfait sur une fiche additionnelle" : "les forfaits de 540 € et 480 € par an sont dans le barème");
+    var taxLabel = S.cls==="2g" ? "Retenue d'impôt au taux global "+pc(s.rate*100,2)+" %"
+                 : S.cls==="2add" ? "Retenue d'impôt, taux fixe de 15 % sur la fiche additionnelle"
+                 : "Retenue d'impôt, classe "+S.cls+", fonds pour l'emploi compris";
+    h += row(taxLabel, -s.tax, null, S.cls==="2add" ? "régularisée par la déclaration annuelle du ménage" : (S.cls==="2g" ? "classe 2 sur "+f0(spouseTaxable()+s.annualR)+" € de revenu imposable du ménage" : null));
+    h += row("Assurance dépendance "+pc(rates.dependency*100,2)+" %", -c.dependency, null, "sur "+f2(s.gross)+" € − "+f2(P.depAllowance)+" € d'abattement, non déductible");
+    h += row("Crédit d'impôt salarié", s.credits.cis, null, "CIS, "+f0(s.credits.cis*12)+" € par an pour "+f0(s.gross*12)+" € de brut");
+    h += row("Crédit d'impôt CO2", s.credits.cico2);
+    if(s.credits.cissm>0) h += row("Crédit d'impôt salaire social minimum", s.credits.cissm);
+    if(s.credits.cic>0) h += row("Crédit d'impôt conjoncture", s.credits.cic, null, "jusqu'au 31 décembre 2026");
+    if(s.cim>0) h += row("Crédit d'impôt monoparental", s.cim, null, "s'il est inscrit sur votre fiche");
+    if(s.atn>0) h += row("Avantage en nature, non versé", -s.atn, "muted");
+    h += row("Net versé", s.net, "total");
+    $("slip").innerHTML = h;
+    $("kNet").textContent = f0(s.net)+" €";
+    $("kRate").textContent = pc(100*s.tax/s.gross, 1)+" %";
+    $("kYear").textContent = f0(r.year)+" €";
+    $("kYearL").textContent = S.months===13 ? "net sur l'année, 13ᵉ mois compris ("+f0(r.bonus.net)+" € net pour le 13ᵉ)" : "net sur l'année, 12 mois";
+    var keys = S.res==="NR" ? ["1","1a","2g"] : ["1","1a","2","2add"];
+    var ch = "";
+    keys.forEach(function(k){
+      if(k==="2g" && S.cls!=="2g") return;
+      var x = k===S.cls ? r : compute(k);
+      ch += '<tr><td>'+LABELS[k]+'</td><td>'+f2(x.slip.tax)+' €</td><td class="'+(k===S.cls?'on':'')+'">'+f2(x.slip.net)+' €</td><td>'+(k===S.cls?'—':(x.slip.net-s.net>=0?'+ ':'− ')+f2(Math.abs(x.slip.net-s.net))+' €')+'</td></tr>';
+    });
+    $("cmp").innerHTML = ch;
+    renderEmployer(s.net, r.year);
+  }
+  render();
+})();
+</script>
+
+</body>
+</html>

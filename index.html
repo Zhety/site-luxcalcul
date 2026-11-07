@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Deux Côtés</title>
+<meta name="description" content="Frontaliers Lorraine ↔ Luxembourg : retraite combinée FR + LU, impôts récupérables, capacité d'emprunt, calculés avec les barèmes officiels 2026. Pré-diagnostic en 6 questions, puis 20 minutes gratuites avec un expert frontalier.">
+<meta name="theme-color" content="#F1F3F7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#"><i aria-hidden="true"></i>Deux Côtés</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#diagnostic">Diagnostic</a>
+      <a href="salaire.html">Brut → net</a>
+      <a href="#methode">Ce qu'on regarde</a>
+      <a href="#sources">Méthode</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <a class="btn small" href="#diagnostic">Prendre rendez-vous</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="frontier" aria-hidden="true"></div>
+    <div>
+      <p class="eyebrow">Frontaliers · Lorraine ↔ Luxembourg</p>
+      <h1 style="margin-top:18px">Vous connaissez votre net.<br><mark>Et après&nbsp;?</mark></h1>
+      <p class="lede">Retraite cumulée des deux côtés, impôts à récupérer, crédit immobilier avec un salaire luxembourgeois. Calculés avec les barèmes officiels 2026, puis vérifiés avec un expert en 20 minutes, gratuitement.</p>
+      <div class="cta">
+        <a class="btn" href="#diagnostic">Commencer mon diagnostic</a>
+        <a class="btn ghost" href="#methode">Ce qu'on regarde</a>
+      </div>
+      <div class="meta">
+        <span>6 questions</span><span>Rendez-vous sous 48 h</span><span>Aucun engagement</span>
+      </div>
+    </div>
+
+    <aside class="card" aria-label="Exemple de diagnostic">
+      <p class="eyebrow"><span>Exemple · profil type</span><span class="num">4 800 € brut × 13</span></p>
+      <div class="split num" style="--fr-w:43%"><b></b><b></b></div>
+      <div class="split-lab num"><span>9 ans en France</span><span>12 ans au Luxembourg</span></div>
+      <div class="figs">
+        <div class="fig"><small>Retraite brute à 65 ans, FR + LU</small><strong class="num" id="exPension">—<em>€ / mois</em></strong></div>
+        <div class="fig"><small>Dont acquise à ce jour</small><strong class="num" id="exNow">—<em>€ / mois</em></strong></div>
+        <div class="fig"><small>Impôts récupérables</small><strong class="num" id="exTax">—<em>€ / an</em></strong></div>
+        <div class="fig"><small>Capacité d'emprunt</small><strong class="num" id="exCap">—<em>€</em></strong></div>
+      </div>
+      <p class="foot">Salarié de 41 ans, marié, un enfant, conjoint à 2 000 € net imposable en France, locataire à 30 km de son travail. Barèmes 2026, <a href="#sources">méthode détaillée</a>.</p>
+    </aside>
+  </div>
+</section>
+
+<section class="diag" id="diagnostic">
+  <div class="wrap">
+    <div class="panel">
+      <div class="rail" id="rail" aria-hidden="true">
+        <div class="on">01 <span>Situation</span></div>
+        <div>02 <span>Salaire</span></div>
+        <div>03 <span>Carrière</span></div>
+        <div>04 <span>Âge</span></div>
+        <div>05 <span>Foyer</span></div>
+        <div>06 <span>Logement</span></div>
+      </div>
+
+      <div class="stage" id="stage">
+
+        <!-- 1 -->
+        <div class="step on" data-step="1">
+          <div>
+            <h2 class="q">Où habitez-vous aujourd'hui&nbsp;?</h2>
+            <p class="hint">Le pays de résidence décide de la classe d'impôt sur votre fiche et des conditions d'assimilation. La distance fixe les <code>frais de déplacement</code> déduits sur votre fiche de retenue : 99 € par kilomètre au-delà du 4ᵉ, plafonnés à 2 574 € par an.</p>
+          </div>
+          <div class="ctrl">
+            <div class="choices" role="group" aria-label="Pays de résidence">
+              <button class="choice" data-k="residence" data-v="FR" aria-pressed="true"><span>France — Moselle, Meurthe-et-Moselle, Meuse</span><span class="k">1</span></button>
+              <button class="choice" data-k="residence" data-v="BE" aria-pressed="false"><span>Belgique — province de Luxembourg, Arlon</span><span class="k">2</span></button>
+              <button class="choice" data-k="residence" data-v="LU" aria-pressed="false"><span>Luxembourg — je suis résident</span><span class="k">3</span></button>
+              <button class="choice" data-k="residence" data-v="SOON" aria-pressed="false"><span>Pas encore frontalier, je signe bientôt</span><span class="k">4</span></button>
+            </div>
+            <div class="field sub">
+              <label for="km">Distance domicile – lieu de travail, à vol d'oiseau</label>
+              <div class="kmrow"><input id="km" type="range" min="0" max="60" step="1" value="30" aria-label="Distance en kilomètres"><output class="num" id="kmo">30<em>km</em></output></div>
+              <div class="scale num"><span>Longwy ≈ 24</span><span>Thionville ≈ 28</span><span>Metz ≈ 55</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 -->
+        <div class="step" data-step="2">
+          <div>
+            <h2 class="q">Votre salaire brut mensuel au Luxembourg</h2>
+            <p class="hint">Celui en haut de votre fiche, avant la <code>caisse de pension</code> et la retenue d'impôt. Le 13ᵉ mois compte pour la retraite et pour l'impôt annuel, indiquez-le.</p>
+          </div>
+          <div class="ctrl">
+            <div class="field">
+              <label for="salary">Brut mensuel</label>
+              <div class="bigval"><input id="salary" type="number" inputmode="numeric" min="2500" max="30000" step="50" value="4800"><span class="u">€ / mois</span></div>
+              <input id="salaryR" type="range" min="2500" max="15000" step="50" value="4800" aria-label="Salaire brut mensuel">
+              <div class="scale num"><span>2 500</span><span>SSM 2 771</span><span>15 000+</span></div>
+            </div>
+            <div class="choices compact" role="group" aria-label="Nombre de mois">
+              <button class="choice" data-k="months" data-v="13" aria-pressed="true"><span>13 mois : 13ᵉ mois ou prime équivalente</span><span class="k">1</span></button>
+              <button class="choice" data-k="months" data-v="12" aria-pressed="false"><span>12 mois, sans 13ᵉ mois</span><span class="k">2</span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="step" data-step="3">
+          <div>
+            <h2 class="q">Combien d'années de chaque côté&nbsp;?</h2>
+            <p class="hint">Années cotisées en France (CARSAT, Agirc-Arrco) et au Luxembourg (CNAP). Les années déjà faites, pas celles à venir. Le salaire français sert au calcul de la pension de base et des points Agirc-Arrco.</p>
+          </div>
+          <div class="ctrl">
+            <div class="years">
+              <div class="yrow"><span class="tag fr">FR</span><input id="yFR" type="range" min="0" max="40" step="1" value="9" aria-label="Années cotisées en France"><output class="num" id="yFRo">9<em>ans</em></output></div>
+              <div class="yrow"><span class="tag lu">LU</span><input id="yLU" type="range" min="0" max="40" step="1" value="12" aria-label="Années cotisées au Luxembourg"><output class="num" id="yLUo">12<em>ans</em></output></div>
+              <div class="ybar" id="ybar" style="--fr-w:43%"><b></b><b></b></div>
+              <p class="ytot num" id="ytot">21 ans cotisés au total</p>
+            </div>
+            <div class="field sub" id="avgFRwrap">
+              <label for="avgFR">Salaire brut mensuel moyen pendant vos années en France, en euros d'aujourd'hui</label>
+              <div class="minival"><input id="avgFR" type="number" inputmode="numeric" min="0" max="20000" step="50" value="2500"><span class="u">€ / mois</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="step" data-step="4">
+          <div>
+            <h2 class="q">Votre âge</h2>
+            <p class="hint">Il fixe l'année de votre départ à 65 ans, donc les taux CNAP de cette année-là, et votre génération pour la durée d'assurance française.</p>
+          </div>
+          <div class="ctrl">
+            <div class="field">
+              <label for="age">Âge</label>
+              <div class="bigval"><input id="age" type="number" inputmode="numeric" min="18" max="64" value="41"><span class="u">ans</span></div>
+              <input id="ageR" type="range" min="20" max="64" step="1" value="41" aria-label="Âge">
+              <div class="scale num"><span>20</span><span>57 · 60 · 65 : âges de départ LU</span><span>64</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 -->
+        <div class="step" data-step="5">
+          <div>
+            <h2 class="q">Votre foyer</h2>
+            <p class="hint">Marié ou pacsé et non-résident, votre fiche est en <code>classe 1</code> par défaut. La classe 2 au taux global s'obtient sur demande, et son intérêt dépend du revenu du conjoint. Parent isolé : classe 1a et crédit d'impôt monoparental.</p>
+          </div>
+          <div class="ctrl">
+            <div class="row2">
+              <div class="choices" role="group" aria-label="Situation">
+                <button class="choice" data-k="family" data-v="single" aria-pressed="false"><span>Célibataire</span><span class="k">1</span></button>
+                <button class="choice" data-k="family" data-v="couple" aria-pressed="true"><span>Marié · pacsé</span><span class="k">2</span></button>
+              </div>
+              <div class="choices" role="group" aria-label="Enfants">
+                <button class="choice" data-k="kids" data-v="0" aria-pressed="false"><span>Sans enfant</span><span class="k">3</span></button>
+                <button class="choice" data-k="kids" data-v="1" aria-pressed="true"><span>1 enfant</span><span class="k">4</span></button>
+                <button class="choice" data-k="kids" data-v="2" aria-pressed="false"><span>2 enfants</span><span class="k">5</span></button>
+              </div>
+            </div>
+            <div class="field sub" id="spouseWrap">
+              <span class="lab">Revenu du conjoint</span>
+              <div class="choices compact" role="group" aria-label="Revenu du conjoint">
+                <button class="choice" data-k="spouseCountry" data-v="FR" aria-pressed="true"><span>Salarié en France</span><span class="k">6</span></button>
+                <button class="choice" data-k="spouseCountry" data-v="LU" aria-pressed="false"><span>Salarié au Luxembourg</span><span class="k">7</span></button>
+                <button class="choice" data-k="spouseCountry" data-v="none" aria-pressed="false"><span>Sans revenu</span><span class="k">8</span></button>
+              </div>
+              <div class="minival" id="spouseIncWrap" style="margin-top:14px"><input id="spouseIncome" type="number" inputmode="numeric" min="0" max="30000" step="50" value="2000"><span class="u" id="spouseIncU">€ net imposable / mois</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6 -->
+        <div class="step" data-step="6">
+          <div>
+            <h2 class="q">Et le logement&nbsp;?</h2>
+            <p class="hint">Un projet d'achat change tout : banque française ou luxembourgeoise, intérêts déductibles au Luxembourg, taux et apport. Un crédit en cours ouvre la déduction des intérêts.</p>
+          </div>
+          <div class="ctrl">
+            <div class="choices" role="group" aria-label="Logement">
+              <button class="choice" data-k="home" data-v="rent" aria-pressed="true"><span>Locataire</span><span class="k">1</span></button>
+              <button class="choice" data-k="home" data-v="buy" aria-pressed="false"><span>Projet d'achat dans les 24 mois</span><span class="k">2</span></button>
+              <button class="choice" data-k="home" data-v="owner" aria-pressed="false"><span>Propriétaire, crédit en cours</span><span class="k">3</span></button>
+              <button class="choice" data-k="home" data-v="paid" aria-pressed="false"><span>Propriétaire, crédit remboursé</span><span class="k">4</span></button>
+            </div>
+            <div class="field sub" id="ownerWrap" hidden>
+              <span class="lab">Votre crédit, d'après le tableau d'amortissement</span>
+              <div class="row2">
+                <div><span class="lab">Intérêts payés l'an dernier</span><div class="minival"><input id="mortgageInterest" type="number" inputmode="numeric" min="0" max="60000" step="100" value="5000"><span class="u">€ / an</span></div></div>
+                <div><span class="lab">Logement disponible depuis</span><div class="minival"><input id="homeYear" type="number" inputmode="numeric" min="1990" max="2026" step="1" value="2021"><span class="u">année</span></div></div>
+                <div><span class="lab">Mensualité actuelle, assurance comprise</span><div class="minival"><input id="loanPayment" type="number" inputmode="numeric" min="0" max="10000" step="10" value="1200"><span class="u">€ / mois</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- results -->
+        <div class="result" id="result">
+          <div class="head">
+            <div>
+              <p class="eyebrow">Votre pré-diagnostic</p>
+              <h2 style="margin-top:12px">Trois chiffres qui méritent un vrai dossier.</h2>
+              <p>Calculés avec les barèmes 2026 en vigueur et les formules officielles, à partir de vos réponses. Ce que vos relevés de carrière et vos justificatifs changeront, l'expert le reprend avec vous.</p>
+            </div>
+            <div class="recap num" id="recap1" aria-label="Vos réponses"></div>
+          </div>
+          <div class="tiles">
+            <div class="tile">
+              <p class="eyebrow" id="rPensionT">Retraite brute à 65 ans · FR + LU</p>
+              <div class="v num" id="rPension">—</div>
+              <p class="d" id="rPensionD"></p>
+              <p class="locked">Relevés CNAP, CARSAT et Agirc-Arrco, départ anticipé : au rendez-vous</p>
+            </div>
+            <div class="tile">
+              <p class="eyebrow">Impôts récupérables · par an</p>
+              <div class="v num" id="rTax">—</div>
+              <p class="d" id="rTaxD"></p>
+              <p class="locked">Demande d'assimilation, fiche de retenue et déclaration : au rendez-vous</p>
+            </div>
+            <div class="tile">
+              <p class="eyebrow" id="rHomeT">Capacité d'emprunt</p>
+              <div class="v num" id="rHome">—</div>
+              <p class="d" id="rHomeD"></p>
+              <p class="locked" id="rHomeL">Banque FR ou LU, taux et apport au rendez-vous</p>
+            </div>
+          </div>
+          <p class="method-link">Chaque paramètre et sa source : <a href="#sources">méthode de calcul</a>.</p>
+          <div class="next">
+            <div>
+              <h3>20 minutes avec un expert frontalier, gratuit.</h3>
+              <p>Appel téléphonique ou visio. Vous repartez avec vos chiffres vérifiés sur pièces et la liste de ce qu'il faut faire, dans l'ordre.</p>
+            </div>
+            <button class="btn" id="toBook">Choisir mon créneau</button>
+          </div>
+        </div>
+
+        <!-- booking -->
+        <div class="book" id="book">
+          <div>
+            <p class="eyebrow">Rendez-vous</p>
+            <h2 style="margin-top:12px">Quand êtes-vous disponible&nbsp;?</h2>
+            <p class="hint">Les créneaux sont calés sur les horaires de frontaliers : tôt le matin, entre midi et deux, ou après 17 h 30 une fois rentré.</p>
+            <div class="recap num" id="recap2"></div>
+          </div>
+          <div class="ctrl">
+            <div class="field">
+              <label>Jour</label>
+              <div class="days" id="days"></div>
+            </div>
+            <div class="field">
+              <label>Heure</label>
+              <div class="slots" id="slots"></div>
+            </div>
+            <form class="form" id="form" novalidate>
+              <div class="row2">
+                <input id="fName" type="text" placeholder="Prénom et nom" autocomplete="name" required>
+                <input id="fPhone" type="tel" placeholder="Téléphone" autocomplete="tel" required>
+              </div>
+              <input id="fMail" type="email" placeholder="E-mail (confirmation et rappel)" autocomplete="email" required>
+              <p class="err" id="fErr">Il manque le créneau, le nom, le téléphone ou un e-mail valide.</p>
+              <label class="consent"><input id="fConsent" type="checkbox" required><span>J'accepte d'être rappelé par un expert partenaire de Deux Côtés à propos de mon diagnostic. Aucune revente de données, désinscription en un message.</span></label>
+            </form>
+          </div>
+        </div>
+
+        <!-- done -->
+        <div class="done" id="done">
+          <div>
+            <p class="eyebrow">Rendez-vous confirmé</p>
+            <h2 style="margin-top:14px">C'est noté, <span id="dName">—</span>.</h2>
+            <p class="when num" id="dWhen">—<span id="dMode">Appel téléphonique · 20 min</span></p>
+            <ol>
+              <li><b>Dans 2 minutes</b> : un SMS et un e-mail de confirmation.</li>
+              <li><b>La veille à 18 h</b> : un rappel avec le nom de l'expert qui vous appelle.</li>
+              <li><b>Le jour J</b> : vos chiffres vérifiés sur pièces, et la liste des actions dans l'ordre.</li>
+            </ol>
+          </div>
+          <div class="prep">
+            <p class="eyebrow">À avoir sous la main</p>
+            <ul>
+              <li>Votre dernière fiche de paie luxembourgeoise et votre fiche de retenue d'impôt</li>
+              <li>Le relevé de carrière CNAP (reçu chaque année en mars)</li>
+              <li>Votre relevé de situation France (info-retraite.fr)</li>
+              <li>Votre dernier avis d'imposition français</li>
+              <li id="prepHome">Le tableau d'amortissement si vous avez un crédit</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer-bar" id="fbar">
+        <div class="left"><span id="stepLab">Question 1 sur 6</span><kbd>Entrée</kbd><span>pour continuer</span></div>
+        <div style="display:flex;gap:10px">
+          <button class="btn ghost" id="back" hidden>Retour</button>
+          <button class="btn" id="next">Continuer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="method" id="methode">
+  <div class="wrap">
+    <div class="frontier" aria-hidden="true"></div>
+    <header>
+      <h2>Trois dossiers que personne ne regarde ensemble.</h2>
+      <p>Votre banque voit un côté, votre comptable l'autre, et la caisse de retraite ne parle à personne. L'expert reprend les trois d'un coup, avec les règles des deux pays.</p>
+    </header>
+    <div class="cols">
+      <article class="col">
+        <p class="eyebrow"><span>Retraite</span><span>CNAP + CARSAT</span></p>
+        <h3>Ce que vous toucherez vraiment à 65 ans</h3>
+        <p>Deux régimes, deux formules, et le règlement européen 883/2004 qui additionne les périodes puis répartit la charge entre les caisses.</p>
+        <ul>
+          <li>Pension luxembourgeoise : <code>majorations forfaitaires + proportionnelles</code>, calcul autonome et au prorata</li>
+          <li>Trimestres français, taux plein à 172 trimestres, décote et pension communautaire</li>
+          <li>Départ anticipé à 57 ou 60 ans : combien ça coûte</li>
+          <li>Rachat de trimestres : rentable ou pas</li>
+        </ul>
+      </article>
+      <article class="col">
+        <p class="eyebrow"><span>Impôts</span><span>Classe 1 · 1a · 2</span></p>
+        <h3>Ce que vous payez en trop chaque année</h3>
+        <p>La plupart des frontaliers ne remplissent pas de déclaration luxembourgeoise. Ils laissent les déductions sur la table.</p>
+        <ul>
+          <li>Assimilation fiscale : classe 2 au taux global, ou pas, selon le revenu du conjoint</li>
+          <li>Épargne-pension <code>4 500 € / an</code> depuis 2026, assurances <code>672 € / personne</code>, épargne-logement, intérêts d'emprunt</li>
+          <li>Télétravail : le seuil des <code>34 jours</code> et l'impôt français</li>
+          <li>Votre fiche de paie ligne par ligne : <a href="salaire.html">estimateur brut → net</a></li>
+          <li>Abattement extra-professionnel <code>4 500 €</code> quand les deux conjoints travaillent</li>
+        </ul>
+      </article>
+      <article class="col">
+        <p class="eyebrow"><span>Immobilier</span><span>FR ou LU</span></p>
+        <h3>Emprunter avec un salaire luxembourgeois</h3>
+        <p>Les banques françaises appliquent la règle HCSF à des revenus étrangers. Les banques luxembourgeoises prêtent, mais pas pareil.</p>
+        <ul>
+          <li>Capacité réelle : <code>35 %</code> du net, assurance comprise, 25 ans maximum</li>
+          <li>Intérêts d'emprunt déductibles côté luxembourgeois, sans plafond pour un logement disponible après 2023</li>
+          <li>Prêt en France, au Luxembourg, ou les deux</li>
+          <li>Achat à Thionville, Metz, Longwy : ce que change la distance</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="why">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Pourquoi un rendez-vous</p>
+      <h2 style="margin-top:12px">Un simulateur donne un chiffre. Un expert donne la suite.</h2>
+      <div class="stats">
+        <div class="stat"><b class="num">124 900</b><small>frontaliers venus de France travaillent au Luxembourg, sur 230 200 salariés frontaliers (2025)</small></div>
+        <div class="stat"><b class="num">2 436 €</b><small>pension luxembourgeoise minimale pour 40 années d'assurance, au 1ᵉʳ juin 2026</small></div>
+      </div>
+    </div>
+    <div class="txt">
+      <p>Le calcul du net brut, tout le monde le fait. Ce qui manque, c'est la personne qui connaît les deux systèmes et qui vous dit, pour votre cas précis, <strong>ce qu'il faut faire en premier</strong>.</p>
+      <p>Les experts qui vous rappellent sont des conseillers en gestion de patrimoine, courtiers en crédit et fiscalistes installés entre Thionville, Metz et Luxembourg. Ils travaillent avec des frontaliers toute l'année. Le premier rendez-vous est à leur charge, <strong>vous ne payez rien</strong>, et vous décidez ensuite si vous voulez aller plus loin avec eux ou non.</p>
+      <p>Pas de dossier à monter, pas de papier à envoyer avant. Vous apportez votre fiche de paie et vos relevés, l'expert fait le reste pendant l'appel.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sources" id="sources">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Méthode de calcul</p>
+      <h2 style="margin-top:12px">Les barèmes, pas des ordres de grandeur.</h2>
+      <p class="intro">Chaque chiffre du pré-diagnostic sort des formules officielles appliquées à vos réponses. Voici les paramètres utilisés, leur valeur et leur source.</p>
+      <p class="asof">Paramètres vérifiés le 4 novembre 2026</p>
+      <ol class="hyp">
+        <li><b>Salaire constant</b> en euros d'aujourd'hui sur toute la carrière, cotisé 12 ou 13 mois selon votre réponse, plafonné à 5 fois le salaire social minimum.</li>
+        <li><b>Départ à 65 ans</b> dans les deux pays, avec les taux CNAP de l'année de départ et la durée d'assurance de votre génération.</li>
+        <li><b>Retenue mensuelle</b> reproduite par la formule du barème annuel, base arrondie au multiple de 5 € inférieur : écart au plus de 0,10 € avec les tables de l'ACD.</li>
+        <li><b>Assimilation accordée</b> : votre salaire luxembourgeois représente au moins 90 % de vos revenus. Le revenu net imposable du conjoint est pris tel quel pour le taux global.</li>
+        <li><b>Capacité d'emprunt</b> selon la règle HCSF : 35 % des revenus nets avant impôt du foyer, vous et votre conjoint, moins la mensualité d'un crédit en cours ; taux moyen des prêts à 25 ans constaté en septembre 2026, assurance emprunteur à 0,30 % du capital par an. Certaines banques retiennent le net après retenue luxembourgeoise, ce qui donne moins.</li>
+        <li><b>Crédit d'impôt conjoncture</b> de juin à décembre 2026 d'après le barème publié par un prestataire de paie, interpolé entre les paliers.</li>
+      </ol>
+    </div>
+    <div>
+      <table class="ptable">
+        <thead><tr><th>Paramètre</th><th>Valeur 2026</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>Salaire social minimum</td><td>2 771,33 € depuis le 1ᵉʳ juin 2026, indice 992,24 ; plafond cotisable 13 856,65 €</td><td><a href="https://itm.public.lu/fr/questions-reponses/droit-travail/remuneration/a/a3.html">ITM</a></td></tr>
+          <tr><td>Cotisations salarié</td><td>pension 8,50 %, maladie 2,80 % + 0,25 %, dépendance 1,40 % après abattement d'un quart du SSM</td><td><a href="https://ccss.public.lu/dam-assets/publications/2026/ccss-20260116-avis-80-99-fr-de.pdf">CCSS, avis du 16 janvier 2026</a></td></tr>
+          <tr><td>Barème de l'impôt</td><td>tarif 2025 reconduit en 2026 : 0 % jusqu'à 13 230 €, 8 % à 42 % au-delà de 234 870 € ; fonds pour l'emploi 7 %, 9 % au-delà de 150 000 € (300 000 € en classe 2)</td><td><a href="https://impotsdirects.public.lu/fr/az/t/tarif_pers.html">ACD, tarif de base</a></td></tr>
+          <tr><td>Classes 1a et 2</td><td>classe 1a : revenu réduit de la moitié de son complément à 52 920 €, taux d'accroissement plafonné à 39 % ; classe 2 : double de l'impôt sur la moitié du revenu</td><td><a href="https://impotsdirects.public.lu/dam-assets/fr/legislation/LIR/LIR2020.pdf">LIR, art. 120bis et 121</a></td></tr>
+          <tr><td>Fiche de retenue</td><td>frais d'obtention 540 €, dépenses spéciales 480 €, frais de déplacement 99 € par unité au-delà de 4, plafond 2 574 €</td><td><a href="https://impotsdirects.public.lu/fr/az/f/frais_salar.html">ACD</a> · <a href="https://impotsdirects.public.lu/fr/salpens/calcul_rem.html">exemple de fiche</a></td></tr>
+          <tr><td>Crédits d'impôt</td><td>CIS 600 € jusqu'à 40 000 € brut puis dégressif, CI-CO2 216 €, CISSM 81 € entre 1 800 et 3 000 € brut puis dégressif, CIM 3 504 €</td><td><a href="https://impotsdirects.public.lu/fr/az/c/credit-impot-salaries/cis2026.html">ACD CIS 2026</a> · <a href="https://impotsdirects.public.lu/fr/az/c/cim/cim2025.html">CIM</a> · <a href="https://securex.lu/my-hr-update-juillet-2026/">CIC</a></td></tr>
+          <tr><td>Déductions</td><td>assurances 672 € par personne, épargne-pension 4 500 € depuis 2026, épargne-logement 1 344 € jusqu'à 40 ans puis 672 €, abattement extra-professionnel 4 500 €, intérêts hypothécaires 2 000 / 3 000 / 4 000 € par personne selon la mise à disposition, sans plafond après 2023</td><td><a href="https://sympass.taxx.lu/en/articles/how-to-cut-your-luxembourg-tax-bill-every-deduction-worth-knowing">taxx.lu</a> · <a href="https://impotsdirects.public.lu/fr/az/a/abat_extrapro.html">ACD</a> · <a href="https://www.baloise.lu/fr/blog/epargne-retraite/2021/avantages-111-bis.html">111bis</a></td></tr>
+          <tr><td>Assimilation</td><td>article 157ter : 90 % des revenus mondiaux imposables au Luxembourg, ou revenus étrangers sous 13 000 € ; Belgique : 50 % des revenus professionnels du ménage</td><td><a href="https://impotsdirects.public.lu/fr/az/a/assimil.html">ACD</a></td></tr>
+          <tr><td>Pension CNAP</td><td>montant de référence 2 706,71 € par mois ; majorations forfaitaires 25,075 % en 2026 jusqu'à 28 % en 2052 ; proportionnelles 1,763 % jusqu'à 1,600 %, seuil 95 à 100, plafond 2,05 % ; minimum 2 436,04 €, maximum 11 277,94 €</td><td><a href="https://cnap.public.lu/fr/pensions/pension-vieillesse-65/pension-vieillesse-651.html">CNAP</a> · <a href="https://cnap.public.lu/dam-assets/brochures/brochure-vieillesse-012025.pdf">brochure, annexe 3</a></td></tr>
+          <tr><td>Coordination européenne</td><td>totalisation des périodes, pension autonome et pension au prorata, la plus élevée est servie</td><td><a href="https://eur-lex.europa.eu/eli/reg/2004/883/oj">règlement (CE) 883/2004, art. 52</a></td></tr>
+          <tr><td>Retraite de base France</td><td>PASS 48 060 € ; taux plein 50 % ; décote 1,25 % par trimestre manquant, 20 au plus, annulée à 67 ans ; 172 trimestres pour les générations 1966 et suivantes ; minimum contributif 756,29 €</td><td><a href="https://www.legisocial.fr/reperes-sociaux/plafond-securite-sociale-2026.html">PASS</a> · <a href="https://www.bred.fr/actualites/suspension-reforme-retraites-conditions-2026-2028">LFSS 2026</a> · <a href="https://www.aide-sociale.fr/retraite-minimum-contributif/">MICO</a></td></tr>
+          <tr><td>Agirc-Arrco</td><td>prix d'achat du point 20,1877 € ; valeur de service 1,4587 € au 1ᵉʳ novembre 2026 ; taux contractuels 6,20 % en tranche 1 et 17 % en tranche 2</td><td><a href="https://reglementation.agirc-arrco.fr/home/baremes/listes-area/baremes-1/valeur-d-achat-du-point-agirc-arrco.html">Agirc-Arrco</a></td></tr>
+          <tr><td>Crédit immobilier</td><td>taux d'effort 35 % assurance comprise, 25 ans ; taux moyen 3,45 % sur 25 ans en septembre 2026</td><td><a href="https://www.cafpi.fr/credit-immobilier/actualites/hcsf-2026-pas-d-assouplissement-des-regles-du-credit-immobilier-ce-que-cela-change-pour-votre-projet">HCSF</a> · <a href="https://lobservatoire.creditlogement.fr/">Observatoire Crédit Logement / CSA</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <div>
+      <details><summary>C'est vraiment gratuit ?</summary><p>Oui. Le rendez-vous de 20 minutes est pris en charge par l'expert partenaire, qui espère que vous ferez appel à lui ensuite. Vous n'avez aucune obligation de le faire.</p></details>
+      <details><summary>Qui sont les experts ?</summary><p>Des professionnels installés en Lorraine et au Luxembourg : conseillers en gestion de patrimoine (statut CIF), courtiers en crédit immobilier (IOBSP) et fiscalistes. Chacun est sélectionné sur son expérience des dossiers frontaliers, pas sur ce qu'il vend.</p></details>
+      <details><summary>Les chiffres du pré-diagnostic sont-ils fiables ?</summary><p>Ils sont calculés avec les formules et barèmes officiels 2026, listés dans la méthode. Ce qui peut encore les faire bouger, c'est ce que vous ne connaissez pas par cœur : vos salaires passés réels, vos trimestres validés, le revenu exact du conjoint. C'est ce que l'expert vérifie sur vos relevés.</p></details>
+      <details><summary>Je suis résident luxembourgeois, ça marche aussi ?</summary><p>Oui pour la retraite et l'immobilier. Pour les impôts, la question de l'assimilation ne se pose pas, mais les déductions sont les mêmes et souvent tout aussi oubliées.</p></details>
+      <details><summary>Que faites-vous de mes données ?</summary><p>Vos réponses et vos coordonnées sont transmises à un seul expert partenaire pour organiser le rendez-vous. Rien n'est revendu. Vous pouvez demander la suppression de vos données par simple message.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Deux Côtés · Thionville</span>
+    <div class="links"><a href="#">Mentions légales</a><a href="#">Confidentialité</a><a href="#">Devenir expert partenaire</a></div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="calc.js"></script>
+<script>
+(function(){
+  var S = { residence:"FR", km:30, salary:4800, months:13, yFR:9, yLU:12, avgFR:2500, age:41, family:"couple", kids:1,
+            spouseIncome:2000, spouseCountry:"FR", home:"rent", mortgageInterest:5000, homeYear:2021, loanPayment:1200, day:null, slot:null };
+  var step = 1, view = "steps"; // steps | result | book | done
+  var $ = function(id){ return document.getElementById(id); };
+  var fmt = function(n){ return Math.round(n).toLocaleString("fr-FR"); };
+  var fmtK = function(n){ return Math.round(n/1000).toLocaleString("fr-FR"); };
+  var pct = function(x, d){ return x.toLocaleString("fr-FR", {minimumFractionDigits:d===undefined?2:d, maximumFractionDigits:d===undefined?2:d}); };
+
+  function input(){
+    return { residence:S.residence, salary:S.salary, months:S.months, km:S.km, yearsFR:S.yFR, yearsLU:S.yLU, avgFR:S.yFR>0?S.avgFR:0,
+             age:S.age, family:S.family, kids:S.kids, spouseIncome:S.spouseIncome,
+             spouseCountry:S.family==="couple"?S.spouseCountry:"none", home:S.home,
+             mortgageInterest:S.home==="owner"?S.mortgageInterest:0, homeYear:S.homeYear, loanPayment:S.home==="owner"?S.loanPayment:0 };
+  }
+
+  /* ---- choices ---- */
+  document.querySelectorAll(".choice").forEach(function(b){
+    b.addEventListener("click", function(){
+      var k = b.dataset.k;
+      document.querySelectorAll('.choice[data-k="'+k+'"]').forEach(function(x){ x.setAttribute("aria-pressed","false"); });
+      b.setAttribute("aria-pressed","true");
+      S[k] = (k==="kids" || k==="months") ? +b.dataset.v : b.dataset.v;
+      sync();
+    });
+  });
+
+  /* ---- synced inputs ---- */
+  function pair(numId, rangeId, key, min, max){
+    var n=$(numId), r=$(rangeId);
+    n.addEventListener("input", function(){ var v=+n.value; if(!isNaN(v)){ S[key]=v; r.value=Math.min(max,Math.max(min,v)); } });
+    n.addEventListener("blur", function(){ var v=Math.min(+n.max,Math.max(+n.min,+n.value||min)); n.value=v; S[key]=v; r.value=Math.min(max,Math.max(min,v)); });
+    r.addEventListener("input", function(){ S[key]=+r.value; n.value=r.value; });
+  }
+  pair("salary","salaryR","salary",2500,15000);
+  pair("age","ageR","age",20,64);
+  function numeric(id, key){
+    var n=$(id);
+    n.addEventListener("input", function(){ var v=+n.value; if(!isNaN(v)) S[key]=v; });
+    n.addEventListener("blur", function(){ var v=Math.min(+n.max,Math.max(+n.min,+n.value||0)); n.value=v; S[key]=v; });
+  }
+  numeric("avgFR","avgFR"); numeric("spouseIncome","spouseIncome"); numeric("mortgageInterest","mortgageInterest"); numeric("homeYear","homeYear"); numeric("loanPayment","loanPayment");
+  $("km").addEventListener("input", function(){ S.km=+$("km").value; $("kmo").innerHTML=S.km+"<em>km</em>"; });
+
+  function years(){
+    S.yFR=+$("yFR").value; S.yLU=+$("yLU").value;
+    $("yFRo").innerHTML=S.yFR+"<em>ans</em>"; $("yLUo").innerHTML=S.yLU+"<em>ans</em>";
+    var t=S.yFR+S.yLU; $("ytot").textContent = t ? t+" ans cotisés au total" : "Aucune année cotisée pour l'instant";
+    $("ybar").style.setProperty("--fr-w", (t? Math.round(S.yFR/t*100):50)+"%");
+    sync();
+  }
+  $("yFR").addEventListener("input",years); $("yLU").addEventListener("input",years);
+
+  /* champs conditionnels */
+  function sync(){
+    $("avgFRwrap").hidden = S.yFR===0;
+    $("spouseWrap").hidden = S.family!=="couple";
+    $("spouseIncWrap").hidden = S.spouseCountry==="none";
+    $("spouseIncU").textContent = S.spouseCountry==="LU" ? "€ brut / mois" : "€ net imposable / mois";
+    $("ownerWrap").hidden = S.home!=="owner";
+  }
+  years();
+
+  /* ---- navigation ---- */
+  function show(){
+    document.querySelectorAll(".step").forEach(function(s){ s.classList.toggle("on", view==="steps" && +s.dataset.step===step); });
+    $("result").classList.toggle("on", view==="result");
+    $("book").classList.toggle("on", view==="book");
+    $("done").classList.toggle("on", view==="done");
+    document.querySelectorAll("#rail div").forEach(function(d,i){
+      d.classList.toggle("on", view==="steps" && i+1===step);
+      d.classList.toggle("done", view!=="steps" || i+1<step);
+    });
+    var fb=$("fbar");
+    fb.hidden = (view==="done");
+    $("back").hidden = (view==="steps" && step===1);
+    if(view==="steps"){ $("stepLab").textContent="Question "+step+" sur 6"; $("next").textContent = step===6 ? "Voir mon pré-diagnostic" : "Continuer"; }
+    else if(view==="result"){ $("stepLab").textContent="Pré-diagnostic"; $("next").textContent="Choisir mon créneau"; }
+    else if(view==="book"){ $("stepLab").textContent="Dernière étape"; $("next").textContent="Confirmer le rendez-vous"; }
+    var panel=document.querySelector(".panel");
+    if(window.scrollY > panel.getBoundingClientRect().top + window.scrollY - 8) panel.scrollIntoView({block:"start"});
+  }
+  function next(){
+    if(view==="steps"){ if(step<6){ step++; } else { compute(); view="result"; } }
+    else if(view==="result"){ view="book"; buildDays(); }
+    else if(view==="book"){ if(validate()){ confirm_(); view="done"; } else { return; } }
+    show();
+  }
+  function back(){
+    if(view==="steps"){ if(step>1) step--; }
+    else if(view==="result"){ view="steps"; step=6; }
+    else if(view==="book"){ view="result"; }
+    show();
+  }
+  $("next").addEventListener("click",next);
+  $("back").addEventListener("click",back);
+  $("toBook").addEventListener("click",function(){ view="book"; buildDays(); show(); });
+  document.addEventListener("keydown",function(e){
+    var inPanel = document.querySelector(".panel").contains(document.activeElement) || document.activeElement===document.body;
+    if(!inPanel || view==="done") return;
+    if(e.key==="Enter" && document.activeElement.tagName!=="BUTTON" && document.activeElement.type!=="checkbox"){ e.preventDefault(); next(); }
+    if(view==="steps" && /^[1-9]$/.test(e.key) && document.activeElement.tagName!=="INPUT"){
+      var cur=document.querySelector('.step[data-step="'+step+'"]');
+      var b=Array.prototype.find.call(cur.querySelectorAll('.choice'), function(c){ return !c.closest("[hidden]") && c.querySelector('.k').textContent===e.key; });
+      if(b){ b.click(); }
+    }
+  });
+
+  /* ---- rendu des résultats ---- */
+  function clsLabel(c){ return c===2 ? "classe 2" : c==="1a" ? "classe 1a" : "classe 1"; }
+  function pensionText(d){
+    var p=d.pension, lu=p.luAt65, fr=p.frAt65, gm=S.salary;
+    var parts=[];
+    if(lu.eligible){
+      var used = lu.usedProrata ? lu.prorata : lu.autonomous;
+      parts.push("<b>Luxembourg "+fmt(lu.monthly)+" €</b> : "+fmt(used.forfait)+" € de majorations forfaitaires + "+pct(used.rate*100, 3)+" % des salaires cotisés"+(lu.usedProrata?", calcul au prorata européen":"")+(used.total<=used.min+0.01?", relevé au minimum garanti":"")+".");
+    } else {
+      parts.push("<b>Luxembourg</b> : moins de 120 mois d'assurance en tout, pas de droit à pension pour l'instant.");
+    }
+    if(fr.qFR>0){
+      parts.push("<b>France "+fmt(fr.total)+" €</b> : "+fmt(fr.base)+" € de base sur "+fr.qFR+" trimestres"+(fr.missing>0?" avec "+fr.missing+" trimestre"+(fr.missing>1?"s":"")+" de décote":", taux plein")+" + "+fmt(fr.agirc)+" € Agirc-Arrco ("+fmt(fr.points)+" points).");
+    }
+    parts.push("Acquis à ce jour : "+fmt(p.totalNow)+" €. Soit "+fmt(100*p.totalAt65/(gm*S.months/12))+" % de votre brut mensuel moyen.");
+    return parts.join(" ");
+  }
+  function taxText(d){
+    var t=d.tax, parts=[];
+    if(t.gainDeclare>0){
+      var how = (t.clsOpt===2 && t.clsNow===1) ? "classe 2 au taux global, abattement extra-professionnel, primes d'assurance" : (t.clsOpt===2 ? "primes d'assurance et abattement extra-professionnel" : "primes d'assurance déjà payées");
+      parts.push("<b>"+fmt(t.gainDeclare)+" €</b> en déposant une déclaration : "+how+".");
+    }
+    if(t.gainMortgage>0) parts.push("<b>+ "+fmt(t.gainMortgage)+" €</b> grâce aux intérêts de votre crédit.");
+    if(t.gainSavings>0) parts.push("<b>+ "+fmt(t.gainSavings)+" €</b> en plaçant "+fmt(t.savingsPlaced)+" € par an en épargne-pension et épargne-logement.");
+    if(!parts.length) parts.push("Votre retenue à la source correspond déjà à l'impôt dû sur ces postes.");
+    parts.push("Net actuel : "+fmt(d.payslip.net)+" € par mois sur une fiche en "+clsLabel(t.clsNow)+".");
+    return parts.join(" ");
+  }
+  function compute(){
+    var d = DC.diagnostic(input());
+    var p = d.pension, t = d.tax, P = DC.P;
+    $("rPension").innerHTML = fmt(p.totalAt65)+"<small>€ / mois</small>";
+    $("rPensionD").innerHTML = pensionText(d);
+    var gainNow = t.gainDeclare + t.gainMortgage;
+    $("rTax").innerHTML = (gainNow>0 ? fmt(gainNow) : "0")+"<small>€ / an</small>" + (t.gainSavings>0 && gainNow>0 ? " <small>+ "+fmt(t.gainSavings)+" avec épargne</small>" : "");
+    $("rTaxD").innerHTML = taxText(d);
+
+    var home=S.home, tt=$("rHomeT"), v=$("rHome"), dd=$("rHomeD"), l=$("rHomeL");
+    var c=d.credit, inc=c.income;
+    tt.textContent = home==="owner" ? "Capacité d'emprunt restante · 25 ans" : "Capacité d'emprunt · 25 ans";
+    v.innerHTML = c.capital>0 ? fmtK(c.capital)+" k<small>€</small>" : "0<small>€</small>";
+    var who = inc.spouse>0 ? " (vous "+fmt(inc.self)+" € + conjoint "+fmt(inc.spouse)+" €)" : "";
+    var less = inc.charges>0 ? ", moins votre mensualité actuelle de "+fmt(inc.charges)+" €" : "";
+    dd.innerHTML = "Mensualité maximale <b>"+fmt(c.pay)+" €</b> : 35 % de "+fmt(inc.total)+" € de revenus nets avant impôt du foyer"+who+less+", assurance comprise ("+fmt(c.insuranceMonthly)+" €). Taux "+pct(c.rate*100)+" % sur 25 ans, moyenne constatée en septembre 2026. Hors apport."
+      + (home==="owner" && t.mortgage>0 ? " Vos intérêts déductibles sont comptés dans la tuile impôts." : "")
+      + (home==="paid" ? " Logement remboursé : la question devient où placer la marge, des deux côtés de la frontière." : "");
+    l.textContent = {rent:"Si vous achetez un jour : banque FR ou LU, au rendez-vous", buy:"Banque FR ou LU, taux négocié, apport : au rendez-vous", owner:"Renégociation, rachat de prêt, second projet : au rendez-vous", paid:"Enveloppes FR et LU comparées : au rendez-vous"}[home];
+    var fam = (S.family==="couple"?"En couple":"Célibataire")+(S.kids? " · "+S.kids+(S.kids>1?" enfants":" enfant"):"");
+    var sp = S.family==="couple" ? (S.spouseCountry==="none" ? "sans revenu" : fmt(S.spouseIncome)+" € "+(S.spouseCountry==="LU"?"brut LU":"net FR")) : null;
+    var homeLab={rent:"Locataire",buy:"Projet d'achat",owner:"Propriétaire · crédit",paid:"Propriétaire"}[home];
+    var resLab={FR:"France",BE:"Belgique",LU:"Luxembourg",SOON:"Bientôt frontalier"}[S.residence];
+    var recap='<div><span>Résidence</span><b>'+resLab+' · '+S.km+' km</b></div><div><span>Brut</span><b>'+fmt(S.salary)+' € × '+S.months+'</b></div><div><span>Carrière</span><b>'+S.yFR+' ans FR · '+S.yLU+' ans LU</b></div><div><span>Âge</span><b>'+S.age+' ans</b></div><div><span>Foyer</span><b>'+fam+(sp?' · conjoint '+sp:'')+'</b></div><div><span>Logement</span><b>'+homeLab+'</b></div>';
+    $("recap1").innerHTML=recap; $("recap2").innerHTML=recap;
+    $("prepHome").hidden = !(home==="owner");
+  }
+
+  /* ---- carte d'exemple : même moteur, profil par défaut ---- */
+  (function(){
+    var d = DC.diagnostic(input());
+    $("exPension").innerHTML = fmt(d.pension.totalAt65)+"<em>€ / mois</em>";
+    $("exNow").innerHTML = fmt(d.pension.totalNow)+"<em>€ / mois</em>";
+    $("exTax").innerHTML = fmt(d.tax.gainDeclare + d.tax.gainMortgage)+"<em>€ / an</em>";
+    $("exCap").innerHTML = fmtK(d.credit.capital)+" k<em>€</em>";
+  })();
+
+  /* ---- booking ---- */
+  var DAYS=["dim","lun","mar","mer","jeu","ven","sam"], MONTHS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+  var SLOTS=["7:30","8:00","12:15","12:45","13:15","17:30","18:00","18:30"];
+  var days=[];
+  function buildDays(){
+    if(days.length) return;
+    var d=new Date(); d.setHours(0,0,0,0);
+    while(days.length<8){ d.setDate(d.getDate()+1); if(d.getDay()!==0 && d.getDay()!==6) days.push(new Date(d)); }
+    var h="";
+    days.forEach(function(x,i){ h+='<button class="day" type="button" data-i="'+i+'" aria-pressed="false"><small>'+DAYS[x.getDay()]+'</small><strong class="num">'+x.getDate()+'</strong><small>'+MONTHS[x.getMonth()]+'</small></button>'; });
+    $("days").innerHTML=h;
+    document.querySelectorAll(".day").forEach(function(b){ b.addEventListener("click",function(){ document.querySelectorAll(".day").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); S.day=+b.dataset.i; S.slot=null; buildSlots(); }); });
+    buildSlots();
+  }
+  function buildSlots(){
+    var h="";
+    SLOTS.forEach(function(s,i){
+      // quelques créneaux déjà pris, de façon déterministe par jour
+      var taken = S.day!==null && ((S.day*7+i)%5===0);
+      h+='<button class="slot num" type="button" data-s="'+s+'" aria-pressed="false"'+(taken||S.day===null?" disabled":"")+'>'+s+'</button>';
+    });
+    $("slots").innerHTML=h;
+    document.querySelectorAll(".slot").forEach(function(b){ b.addEventListener("click",function(){ document.querySelectorAll(".slot").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); S.slot=b.dataset.s; }); });
+  }
+  function validate(){
+    var ok = S.day!==null && S.slot && $("fName").value.trim().length>1 && $("fPhone").value.replace(/\D/g,"").length>=9 && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test($("fMail").value) && $("fConsent").checked;
+    $("fErr").classList.toggle("on",!ok);
+    if(!ok){ toast(S.day===null||!S.slot ? "Choisissez un jour et une heure." : "Vérifiez vos coordonnées."); }
+    return ok;
+  }
+  function confirm_(){
+    var d=days[S.day];
+    $("dName").textContent=$("fName").value.trim().split(" ")[0];
+    var full=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"][d.getDay()]+" "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" à "+S.slot.replace(":"," h ");
+    $("dWhen").firstChild.textContent=full.charAt(0).toUpperCase()+full.slice(1);
+    $("dMode").textContent="Appel au "+$("fPhone").value.trim()+" · 20 min";
+    /* En production : POST vers Supabase (table leads) + notification SMS/e-mail. Ici, aucune donnée n'est envoyée. */
+  }
+  $("form").addEventListener("submit",function(e){ e.preventDefault(); next(); });
+
+  var tt;
+  function toast(m){ var t=$("toast"); t.textContent=m; t.classList.add("on"); clearTimeout(tt); tt=setTimeout(function(){t.classList.remove("on");},2600); }
+
+  show();
+})();
+</script>
+
+</body>
+</html>
