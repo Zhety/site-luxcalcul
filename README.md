@@ -30,4 +30,4 @@ Quand un paramètre change (indexation, nouveau barème), mettre à jour `calc.j
 ## À faire
 
 - Déployer `tools/leads.gs` et renseigner `LEADS_URL` : tant qu'il est vide, le formulaire affiche « ouvre très bientôt ».
-- Vérifier que la boîte info@brutnet.lu (OVH) reçoit bien les e-mails.
+- Les leads arrivent par e-mail sur info@brutnet.lu via FormSubmit (LEADS_URL dans diagnostic.html). tools/leads.gs reste disponible pour passer à une feuille Google.

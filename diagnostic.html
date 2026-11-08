@@ -663,8 +663,8 @@
     $("dMode").textContent="Créneau souhaité · appel au "+$("fPhone").value.trim()+" · 20 min";
   }
 
-  /* ---- envoi du lead : Google Apps Script (tools/leads.gs) → feuille « Leads » + e-mail ---- */
-  var LEADS_URL = "";   /* URL du déploiement Apps Script, se termine par /exec */
+  /* ---- envoi du lead par e-mail : FormSubmit (formsubmit.co) → info@brutnet.lu ---- */
+  var LEADS_URL = "https://formsubmit.co/ajax/info@brutnet.lu";
   var sending = false;
   function utm(){
     var q = new URLSearchParams(location.search), o = {};
@@ -685,14 +685,34 @@
       source: Object.assign({ page: location.pathname, referrer: document.referrer || "" }, utm())
     };
   }
+  function mail(){
+    var d = payload(), a = d.answers, r = d.results, s = d.source;
+    var jour = days[S.day].toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+    var L = { FR:"France", BE:"Belgique", LU:"Luxembourg", SOON:"pas encore frontalier", couple:"en couple", single:"seul(e)",
+              rent:"locataire", buy:"projet d'achat sous 24 mois", owner:"propriétaire, crédit en cours", paid:"propriétaire, crédit remboursé" };
+    var camp = [s.utm_source,s.utm_medium,s.utm_campaign].filter(Boolean).join(" / ") || (s.gclid ? "Google Ads" : (s.fbclid ? "Facebook" : ""));
+    return {
+      _subject: "Nouveau lead brutnet.lu : " + d.name + ", " + jour + " à " + d.slot,
+      _template: "table", _captcha: "false", _replyto: d.email, _honey: d.website,
+      "Nom": d.name, "Téléphone": d.phone, "E-mail": d.email, "Rappel souhaité": jour + " à " + d.slot,
+      "Résidence": (L[a.residence]||a.residence) + (a.km ? " (" + a.km + " km)" : ""), "Salaire brut": a.salary + " € × " + a.months + " mois",
+      "Âge": a.age + " ans", "Carrière": a.yearsFR + " ans en France, " + a.yearsLU + " ans au Luxembourg",
+      "Foyer": (L[a.family]||a.family) + ", " + a.kids + " enfant(s)" + (a.family==="couple" ? (a.spouseCountry==="none" ? ", conjoint sans revenu" : ", conjoint en " + (L[a.spouseCountry]||a.spouseCountry) + " (" + a.spouseIncome + " € / mois)") : ""),
+      "Logement": L[a.home]||a.home,
+      "Net mensuel": r.netMonthly + " € (classe " + r.classNow + ")", "Retraite à 65 ans": r.pensionAt65 + " € / mois",
+      "Impôt récupérable": r.taxGainYear + " € / an (" + r.taxGainWithSavings + " € avec épargne)",
+      "Capacité d'emprunt": r.loanCapacity + " € (mensualité " + r.loanMonthly + " €)",
+      "Provenance": camp || s.referrer || "accès direct", "Page d'arrivée": s.landing || s.page
+    };
+  }
   function send(){
     if(sending) return;
     if(!LEADS_URL){ toast("La prise de rendez-vous en ligne ouvre très bientôt."); return; }
     sending = true; var btn=$("next"), label=btn.textContent; btn.disabled=true; btn.textContent="Envoi…";
-    fetch(LEADS_URL, { method:"POST", body: JSON.stringify(payload()) })   /* text/plain : pas de requête préalable CORS */
+    fetch(LEADS_URL, { method:"POST", headers:{ "Content-Type":"application/json", "Accept":"application/json" }, body: JSON.stringify(mail()) })
       .then(function(r){ return r.json(); })
       .then(function(j){
-        if(!j || !j.ok) throw new Error(j && j.error || "refus");
+        if(!j || String(j.success) !== "true") throw new Error(j && j.message || "refus");
         confirm_(); view="done"; show();
         try{ if(window.gtag) gtag("event","generate_lead"); }catch(e){}
       })
