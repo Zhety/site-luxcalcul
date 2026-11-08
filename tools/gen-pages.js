@@ -83,7 +83,7 @@ const FOOT = `
 <footer>
   <div class="wrap">
     <span>© 2026 brutnet.lu · Thionville</span>
-    <div class="links"><a href="/">Salaire brut net Luxembourg</a><a href="/tableau-salaire-brut-net-luxembourg">Tableau brut net 2026</a><a href="/salaire-minimum-luxembourg">Salaire minimum 2026</a><a href="/impot-frontalier">Déclaration d'impôts frontalier</a><a href="/remboursement-impot-luxembourg">Remboursement d'impôt</a><a href="/diagnostic">Retraite et crédit frontalier</a><a href="/diagnostic#sources">Méthode et sources</a><a href="/mentions-legales">Mentions légales</a><a href="/mentions-legales#confidentialite">Confidentialité</a></div>
+    <div class="links"><a href="/">Salaire brut net Luxembourg</a><a href="/tableau-salaire-brut-net-luxembourg">Tableau brut net 2026</a><a href="/salaire-minimum-luxembourg">Salaire minimum 2026</a><a href="/impot-frontalier">Déclaration d'impôts frontalier</a><a href="/remboursement-impot-luxembourg">Remboursement d'impôt</a><a href="/classe-impot-luxembourg">Classes d'impôt</a><a href="/teletravail-frontalier-luxembourg">Télétravail 34 jours</a><a href="/diagnostic">Retraite et crédit frontalier</a><a href="/diagnostic#sources">Méthode et sources</a><a href="/mentions-legales">Mentions légales</a><a href="/mentions-legales#confidentialite">Confidentialité</a></div>
   </div>
 </footer>
 
@@ -443,6 +443,241 @@ ${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>
 ` + FOOT;
 }
 
+/* ------------------------------------------------------------------ classes d'impôt */
+function classPage() {
+  const url = "/classe-impot-luxembourg";
+  const ex = [3500, 4500, 5500, 7000].map((g) => [g, calc(g)]);
+  const e4 = calc(4000);
+  const title = "Classe d'impôt Luxembourg 2026 : classe 1, 1a ou 2, résident et frontalier";
+  const desc = "Classe d'impôt au Luxembourg : qui est en classe 1, 1a ou 2, résident ou frontalier marié, et ce que ça change sur le net. Règles officielles ACD 2026.";
+  const q = [
+    ["Quelle classe d'impôt pour un frontalier marié ?", "La classe 1, avec ou sans enfant, tant que le couple n'est pas imposé collectivement. L'imposition collective suppose de remplir les conditions de l'assimilation : la fiche de retenue porte alors un taux, calculé en classe 2 sur les revenus du ménage."],
+    ["Qui est en classe 1a au Luxembourg ?", "Les personnes qui ne sont pas en classe 2 et qui sont veuves, qui bénéficient d'une modération d'impôt pour enfant, ou qui ont 64 ans révolus au 1er janvier de l'année d'imposition. Un frontalier marié non imposé collectivement reste en classe 1 même avec des enfants."],
+    ["Quelle est la différence de net entre la classe 1 et la classe 2 ?", `À ${gLabel(4000)} € brut par mois, ${f2(e4.c1.net)} € net en classe 1 et ${f2(e4.c2.net)} € en classe 2, soit ${f2(e4.c2.net - e4.c1.net)} € de plus par mois. L'écart grandit avec le salaire.`],
+    ["Comment changer de classe d'impôt ?", "La classe est fixée par l'administration des contributions directes sur la fiche de retenue. Après un mariage, une naissance, un divorce ou un décès, on demande la modification de la fiche. Un frontalier marié obtient l'imposition collective en demandant l'assimilation dans sa déclaration (modèle 100)."],
+  ];
+  const t = (rows) => `<table class="ptable ex">
+        <thead><tr><th>Situation</th><th>Sans enfant</th><th>Avec enfant</th><th>64 ans et plus</th></tr></thead>
+        <tbody>
+${rows.map(([s, a, b, c]) => `          <tr><td>${s}</td><td>${a}</td><td>${b}</td><td>${c}</td></tr>`).join("\n")}
+        </tbody>
+      </table>`;
+  return head({ title, desc, url, jsonld: { "@context": "https://schema.org", "@graph": [article("Classe d'impôt au Luxembourg : 1, 1a ou 2", url), crumbs([["brutnet.lu", "/"], ["Classe d'impôt", url]]), faq(q)] } }) + `
+<section class="hero sm">
+  <div class="wrap">
+    <p class="eyebrow">Fiscalité · Luxembourg · règles de l'ACD en vigueur en 2026</p>
+    <h1 style="margin-top:18px">Classe d'impôt au Luxembourg : <mark>1, 1a ou 2</mark> ?</h1>
+    <p class="lede">La classe d'impôt figure sur votre fiche de retenue et fixe l'impôt prélevé chaque mois. À ${gLabel(4000)} € brut, la classe 2 laisse ${f2(e4.c2.net - e4.c1.net)} € net de plus par mois que la classe 1. Qui a droit à quoi, résident ou frontalier.</p>
+  </div>
+</section>
+
+<section class="prose" id="residents">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Résidents</p>
+      <h2 style="margin-top:12px">Les classes d'un résident</h2>
+      <p class="intro">« Avec enfant » : vous bénéficiez d'une modération d'impôt pour enfant. « 64 ans et plus » : 64 ans révolus au 1ᵉʳ janvier de l'année d'imposition.</p>
+    </div>
+    <div>
+      ${t([
+        ["Célibataire", "1", "1a", "1a"],
+        ["Marié ou partenaire, imposé collectivement", "2", "2", "2"],
+        ["Marié ou partenaire, imposition individuelle", "1, avec un taux", "1, avec un taux", "1, avec un taux"],
+        ["Partenaires sans imposition collective", "1", "1a", "1a"],
+        ["Un seul des époux réside au Luxembourg", "1", "1a", "1a"],
+        ["Divorcé ou séparé", "1", "1a", "1a"],
+        ["Veuf", "1a", "1a", "1a"],
+      ])}
+      <p class="note">Classe 2 aussi pendant les 3 années qui suivent un divorce ou un décès, à certaines conditions. Le couple dont un seul époux réside au Luxembourg peut demander l'imposition collective si l'époux résident gagne au moins 90 % des revenus professionnels du ménage.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="frontaliers">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Frontaliers</p>
+      <h2 style="margin-top:12px">Les classes d'un frontalier</h2>
+      <p class="intro">Règles applicables aux non-résidents depuis l'année d'imposition 2018.</p>
+    </div>
+    <div>
+      ${t([
+        ["Célibataire", "1", "1a", "1a"],
+        ["Marié, sans imposition collective", "1", "1", "1"],
+        ["Marié ou partenaire, imposé collectivement (assimilation)", "taux global", "taux global", "taux global"],
+        ["Partenaires sans imposition collective", "1", "1a", "1a"],
+        ["Divorcé ou séparé", "1", "1a", "1a"],
+        ["Veuf", "1a", "1a", "1a"],
+      ])}
+      <p class="note">Le « taux global » est inscrit sur la fiche à la place d'une classe : c'est le taux d'un résident imposé en classe 2 sur les revenus mondiaux du ménage, appliqué au seul salaire luxembourgeois.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="marie">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Le cas qui coûte cher</p>
+      <h2 style="margin-top:12px">Frontalier marié : classe 1 par défaut</h2>
+    </div>
+    <div class="txt">
+      <p>Un frontalier marié est imposé seul, en <strong>classe 1</strong>, comme un célibataire, et sans passer en classe 1a s'il a des enfants. La règle des 50 % des revenus du ménage, qui donnait la classe 2 avant 2018, ne figure plus dans les règles de l'administration.</p>
+      <p>Pour être imposé en couple, il faut remplir les conditions de l'<strong>assimilation</strong> : au moins 90 % des revenus de chaque conjoint imposables au Luxembourg, ou moins de 13 000 € de revenus nets non imposables au Luxembourg. La demande se fait dans la déclaration modèle 100, pour l'année écoulée : l'impôt trop retenu est remboursé, et le taux global est inscrit sur les fiches suivantes. Les revenus 2025 peuvent être déclarés jusqu'au <strong>31 décembre 2026</strong>.</p>
+      <p>Le gain est fort quand le conjoint gagne peu, faible ou nul quand les deux revenus sont proches. <a href="/remboursement-impot-luxembourg">Combien récupérer</a> · <a href="/impot-frontalier#assimilation">conditions détaillées</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="ecart">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">En euros</p>
+      <h2 style="margin-top:12px">Le net selon la classe</h2>
+      <p class="intro">Net mensuel de novembre 2026, sans frais de déplacement. Classe 1a avec le crédit d'impôt monoparental.</p>
+    </div>
+    <div>
+      <table class="ptable ex num">
+        <thead><tr><th>Brut mensuel</th><th>Classe 1</th><th>Classe 1a</th><th>Classe 2</th></tr></thead>
+        <tbody>
+${ex.map(([g, r]) => `          <tr><td><a href="${slugOf(g)}">${f2(g)} €</a></td>${cell(g, 1, 0, r.c1.net)}${cell(g, "1a", 0, r.c1a.net)}${cell(g, 2, 0, r.c2.net)}</tr>`).join("\n")}
+        </tbody>
+      </table>
+      <p class="note"><a href="/tableau-salaire-brut-net-luxembourg">Tableau complet par classe</a>, de 2 771 € à 15 000 € brut.</p>
+      ${LEAD}
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <div>
+${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>`).join("\n")}
+    </div>
+  </div>
+</section>
+
+<section class="prose">
+  <div class="wrap">
+    <div><p class="eyebrow">Sources</p></div>
+    <div class="txt"><p class="note"><a href="https://impotsdirects.public.lu/fr/az/c/class_resid.html" rel="noopener">ACD, classes des résidents</a> · <a href="https://impotsdirects.public.lu/fr/az/c/class_nonresid.html" rel="noopener">ACD, classes des non-résidents</a> · <a href="https://impotsdirects.public.lu/fr/az/a/assimil.html" rel="noopener">ACD, assimilation</a> · <a href="https://guichet.public.lu/fr/citoyens/fiscalite/declaration-impot-decompte/activite-professionnelle/fiche-retenue-impot/demander-modifier-fiche-nonresident.html" rel="noopener">Guichet.lu, fiche de retenue d'un non-résident</a></p></div>
+  </div>
+</section>
+` + FOOT;
+}
+
+/* ------------------------------------------------------------------ télétravail */
+function teleworkPage() {
+  const url = "/teletravail-frontalier-luxembourg";
+  const title = "Télétravail frontalier Luxembourg 2026 : règle des 34 jours et 25 %";
+  const desc = "Frontalier France-Luxembourg : 34 jours de télétravail par an côté impôt, moins de 25 % (ou 50 % avec accord) côté sécurité sociale. Jours qui comptent, temps partiel, dépassement : compteur gratuit.";
+  const q = [
+    ["Combien de jours de télétravail pour un frontalier français au Luxembourg ?", "34 jours par an côté impôt : jusqu'à ce seuil, le salaire reste imposable au Luxembourg seulement. Côté sécurité sociale, vous restez affilié au Luxembourg sous 25 % de temps de travail en France, ou sous 50 % avec l'accord-cadre européen."],
+    ["Une demi-journée de télétravail compte-t-elle pour un jour ?", "Oui. Toute fraction de journée travaillée en France ou dans un autre pays que le Luxembourg compte comme une journée entière."],
+    ["Que se passe-t-il si je dépasse 34 jours ?", "La France impose la part du salaire correspondant à tous les jours travaillés hors du Luxembourg, dès le premier jour. Elle se déclare en case 1AG ou 1BG et donne lieu à des acomptes de prélèvement à la source."],
+    ["Le seuil de 34 jours est-il réduit à temps partiel ?", "Oui. Il est réduit proportionnellement au temps de travail prévu au contrat et à la durée du contrat dans l'année."],
+  ];
+  return head({ title, desc, url, jsonld: { "@context": "https://schema.org", "@graph": [article("Télétravail des frontaliers France-Luxembourg : 34 jours et 25 %", url), crumbs([["brutnet.lu", "/"], ["Télétravail frontalier", url]]), faq(q)] } }) + `
+<section class="hero sm">
+  <div class="wrap">
+    <p class="eyebrow">Frontaliers France ↔ Luxembourg · règles en vigueur en 2026</p>
+    <h1 style="margin-top:18px">Télétravail frontalier : <mark>34 jours</mark>, pas un de plus.</h1>
+    <p class="lede">Deux seuils différents s'appliquent : <strong>34 jours par an</strong> pour l'impôt, <strong>moins de 25 %</strong> du temps de travail (50 % avec accord) pour la sécurité sociale. Ce qui compte, ce qui ne compte pas, et votre seuil si vous êtes à temps partiel.</p>
+  </div>
+</section>
+
+<section class="prose" id="compteur">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Compteur</p>
+      <h2 style="margin-top:12px">Où en êtes-vous ?</h2>
+      <p class="intro">Le seuil de 34 jours est réduit au prorata du temps partiel et des mois sous contrat dans l'année.</p>
+    </div>
+    <div>
+      <form class="form ttf" id="tt" onsubmit="return false">
+        <label>Jours de télétravail en France<input id="ttDays" type="number" inputmode="numeric" min="0" max="366" value="30"></label>
+        <label>Jours de mission hors Luxembourg<input id="ttTrips" type="number" inputmode="numeric" min="0" max="366" value="2"></label>
+        <label>Temps de travail (%)<input id="ttPct" type="number" inputmode="numeric" min="10" max="100" value="100"></label>
+        <label>Mois sous contrat dans l'année<input id="ttMonths" type="number" inputmode="numeric" min="1" max="12" value="12"></label>
+      </form>
+      <div class="callout" id="ttOut" style="margin-top:18px" aria-live="polite"></div>
+      <p class="note">Comptez une demi-journée comme un jour. Les congés, repos, jours fériés et jours de maladie ne comptent pas.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="impot">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Impôt</p>
+      <h2 style="margin-top:12px">La règle des 34 jours</h2>
+      <p class="intro">Avenant du 7 novembre 2022 à la convention fiscale franco-luxembourgeoise, appliqué depuis le 1ᵉʳ janvier 2023. Aucun texte ne relève ce seuil à ce jour.</p>
+    </div>
+    <div class="txt">
+      <h3>Les jours qui comptent</h3>
+      <ul>
+        <li>Les jours travaillés en France, votre pays de résidence, dont le télétravail ;</li>
+        <li>les jours travaillés dans un autre pays que le Luxembourg (missions, déplacements) ;</li>
+        <li>les jours de formation professionnelle suivie en France ;</li>
+        <li>toute fraction de journée, qui compte comme une journée entière.</li>
+      </ul>
+      <h3>Les jours qui ne comptent pas</h3>
+      <p>Les jours où votre présence en France n'est pas liée à votre travail : congés, repos hebdomadaire et jours fériés non travaillés, incapacité de travail pour maladie, force majeure indépendante de l'employeur et du salarié.</p>
+      <h3>Au-delà de 34 jours</h3>
+      <p>La France peut imposer la rémunération <strong>dès le premier jour</strong>, à hauteur du temps passé à travailler en France ou dans un pays tiers. Cette part se déclare en <strong>case 1AG</strong> (ou 1BG) et donne lieu à des acomptes de prélèvement à la source. Le reste du salaire suit la règle habituelle : 2047, cases 1AF et 8TK (<a href="/impot-frontalier#france">voir le guide</a>).</p>
+      <p>Deux exceptions : les indemnités de maladie ou de maternité versées par la sécurité sociale d'un État sont imposables dans cet État, et les heures supplémentaires sont imposables là où elles ont été effectuées.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="secu">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Sécurité sociale</p>
+      <h2 style="margin-top:12px">Moins de 25 %, ou moins de 50 % avec accord</h2>
+    </div>
+    <div class="txt">
+      <p>Vous restez affilié à la sécurité sociale luxembourgeoise tant que vous travaillez <strong>moins de 25 %</strong> de votre temps en France. Depuis le 1ᵉʳ juillet 2023, l'accord-cadre européen sur le télétravail transfrontalier permet d'aller jusqu'à <strong>moins de 50 %</strong> de télétravail dans le pays de résidence, sur demande de l'employeur et avec un certificat A1 de trois ans au plus.</p>
+      <p>Les deux seuils sont indépendants : 40 jours de télétravail restent sous 25 % du temps de travail, mais dépassent les 34 jours fiscaux.</p>
+      ${LEAD}
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <div>
+${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>`).join("\n")}
+    </div>
+  </div>
+</section>
+
+<section class="prose">
+  <div class="wrap">
+    <div><p class="eyebrow">Sources</p></div>
+    <div class="txt"><p class="note"><a href="https://impotsdirects.public.lu/dam-assets/fr/conventions/conv/avenant-a-la-convention-lu-fr-34-jours-et-fonction-publique-signe-7-novembre-2022.pdf" rel="noopener">Avenant du 7 novembre 2022</a> · <a href="https://eurometropolemetz.eu/fileadmin/user_upload/mediatheque_metropole/telechargement/Transfrontalier/Fiche_1_2025_Revenus_TS_DDFIP57.pdf" rel="noopener">DDFiP de la Moselle, fiche frontaliers</a> · <a href="https://ccss.public.lu/en/employeurs/secteur-prive/activite-etranger/accord-teletravail.html" rel="noopener">CCSS, accord-cadre</a> · <a href="https://guichet.public.lu/fr/citoyens/travail/conditions-travail/teletravail/teletravail.html" rel="noopener">Guichet.lu, télétravail</a></p></div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  function n(i,min,max){var v=parseFloat($(i).value);return isNaN(v)?min:Math.min(max,Math.max(min,v))}
+  function upd(){
+    var d=n("ttDays",0,366), t=n("ttTrips",0,366), p=n("ttPct",10,100), m=n("ttMonths",1,12);
+    var seuil=34*p/100*m/12, tot=d+t, s=(Math.round(seuil*10)/10).toLocaleString("fr-FR");
+    var reste=seuil-tot;
+    $("ttOut").innerHTML = tot<=seuil
+      ? "<strong>"+tot+" jour"+(tot>1?"s":"")+" sur "+s+" autorisés.</strong> Il vous reste "+(Math.floor(reste*10)/10).toLocaleString("fr-FR")+" jour(s) : votre salaire reste imposable au Luxembourg seulement."
+      : "<strong>Seuil dépassé : "+tot+" jours pour "+s+" autorisés.</strong> La France peut imposer la part du salaire de ces "+tot+" jours, dès le premier, en case 1AG avec des acomptes. <a href=\\"/diagnostic#diagnostic\\">Faites vérifier votre cas gratuitement</a>.";
+  }
+  ["ttDays","ttTrips","ttPct","ttMonths"].forEach(function(i){$(i).addEventListener("input",upd)}); upd();
+})();
+</script>
+` + FOOT;
+}
+
 /* montants insécables : « 3 151,96 € » ne se coupe pas en fin de ligne */
 const nb = (html) => html.replace(/(\d) (?=\d{3}\b|€|%)/g, "$1\u00a0");
 
@@ -452,8 +687,10 @@ AMOUNTS.forEach((g, i) => fs.writeFileSync(path.join(ROOT, "salaire-brut-net", `
 fs.writeFileSync(path.join(ROOT, "tableau-salaire-brut-net-luxembourg.html"), nb(tablePage()));
 fs.writeFileSync(path.join(ROOT, "salaire-minimum-luxembourg.html"), nb(ssmPage()));
 fs.writeFileSync(path.join(ROOT, "remboursement-impot-luxembourg.html"), nb(rembPage()));
+fs.writeFileSync(path.join(ROOT, "classe-impot-luxembourg.html"), nb(classPage()));
+fs.writeFileSync(path.join(ROOT, "teletravail-frontalier-luxembourg.html"), nb(teleworkPage()));
 
-const core = ["/", "/tableau-salaire-brut-net-luxembourg", "/salaire-minimum-luxembourg", "/impot-frontalier", "/remboursement-impot-luxembourg", "/diagnostic"];
+const core = ["/", "/tableau-salaire-brut-net-luxembourg", "/salaire-minimum-luxembourg", "/impot-frontalier", "/remboursement-impot-luxembourg", "/classe-impot-luxembourg", "/teletravail-frontalier-luxembourg", "/diagnostic"];
 const urls = [...core, ...AMOUNTS.map(slugOf)];
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

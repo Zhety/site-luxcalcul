@@ -379,3 +379,8 @@ footer a:hover{color:var(--ink)}
 .callout.lead{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:22px}
 .callout.lead p{margin:0;flex:1 1 320px;font-size:14.5px}
 .callout.lead .btn{flex:none}
+
+/* compteur télétravail */
+.ttf{grid-template-columns:1fr 1fr;gap:14px}
+.ttf label{display:grid;gap:6px;font-size:13.5px;color:var(--ink-2)}
+@media (max-width:560px){.ttf{grid-template-columns:1fr}}

@@ -170,7 +170,7 @@ console.log('--- Pages générées (tools/gen-pages.js) = moteur');
   const fmt = n => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/\u202f/g, ' ');
   const dir = path.join(__dirname, 'salaire-brut-net');
   const files = fs.readdirSync(dir).map(f => path.join(dir, f))
-    .concat(['tableau-salaire-brut-net-luxembourg.html', 'salaire-minimum-luxembourg.html', 'remboursement-impot-luxembourg.html'].map(f => path.join(__dirname, f)));
+    .concat(['tableau-salaire-brut-net-luxembourg.html', 'salaire-minimum-luxembourg.html', 'remboursement-impot-luxembourg.html', 'classe-impot-luxembourg.html'].map(f => path.join(__dirname, f)));
   let n = 0;
   files.forEach(file => {
     const page = fs.readFileSync(file, 'utf8');
