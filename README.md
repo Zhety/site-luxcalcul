@@ -30,4 +30,4 @@ Quand un paramètre change (indexation, nouveau barème), mettre à jour `calc.j
 ## À faire
 
 - Déployer `tools/leads.gs` et renseigner `LEADS_URL` : tant qu'il est vide, le formulaire affiche « ouvre très bientôt ».
-- Créer la boîte info@brutnet.lu (citée dans les mentions légales) et compléter le capital social de MALAUTO dans mentions-legales.html.
+- Vérifier que la boîte info@brutnet.lu (OVH) reçoit bien les e-mails.
