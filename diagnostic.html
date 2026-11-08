@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<script>if(/\.html$/.test(location.pathname))history.replaceState(null,"",location.pathname.replace(/(index)?\.html$/,"")+location.search+location.hash)</script>
+<script>(function(){var H=history,P=function(){return location.pathname.replace(/(index)?\.html$/,"")};if(P()!==location.pathname)H.replaceState(null,"",P()+location.search+location.hash);var C=function(){if(location.hash)H.replaceState(null,"",P()+location.search)};addEventListener("load",function(){setTimeout(C,60)});addEventListener("hashchange",C)})()</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Frontalier Luxembourg : retraite, impôts et crédit immobilier 2026</title>
 <meta name="description" content="Frontaliers Luxembourg : retraite France + Luxembourg, impôts à récupérer, capacité d'emprunt, calculés avec les barèmes officiels 2026. Diagnostic gratuit en 6 questions.">
@@ -694,11 +694,11 @@
     fetch(LEADS_URL, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) })
       .then(function(r){ return r.json(); })
       .then(function(j){
-        if(!j || !j.ok) throw new Error(j && j.error || "");
+        if(!j || !j.ok) throw { srv: j && j.error };
         confirm_(); view="done"; show();
         try{ if(window.gtag) gtag("event","generate_lead"); }catch(e){}
       })
-      .catch(function(e){ toast(e && e.message || "L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez."); })
+      .catch(function(e){ toast(e && e.srv || "L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez."); })
       .then(function(){ sending=false; btn.disabled=false; btn.textContent=label; });
   }
   try{ if(!sessionStorage.getItem("bn_first")) sessionStorage.setItem("bn_first", JSON.stringify(location.pathname+location.search)); }catch(e){}

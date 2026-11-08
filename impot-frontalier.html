@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<script>if(/\.html$/.test(location.pathname))history.replaceState(null,"",location.pathname.replace(/(index)?\.html$/,"")+location.search+location.hash)</script>
+<script>(function(){var H=history,P=function(){return location.pathname.replace(/(index)?\.html$/,"")};if(P()!==location.pathname)H.replaceState(null,"",P()+location.search+location.hash);var C=function(){if(location.hash)H.replaceState(null,"",P()+location.search)};addEventListener("load",function(){setTimeout(C,60)});addEventListener("hashchange",C)})()</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Déclaration d'impôts frontalier Luxembourg : France et Luxembourg</title>
 <meta name="description" content="Frontalier France-Luxembourg : cases 1AF et 8TK en France, règle des 34 jours, décompte annuel ou déclaration au Luxembourg, assimilation, déductions.">
