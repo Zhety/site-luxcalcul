@@ -14,6 +14,7 @@ Site statique pour frontaliers et résidents du Luxembourg, publié sur https://
 
 - `style.css` : feuille de style partagée.
 - `calc.js` : moteur de calcul (cotisations et impôt luxembourgeois, crédits d'impôt, pension CNAP, pension française, capacité d'emprunt). Chaque constante porte sa source dans l'objet `P`.
+- `tools/leads.gs` : réception des demandes de rappel (Google Apps Script → feuille « Leads » + e-mail). Mode d'installation en tête du fichier ; l'URL `/exec` du déploiement va dans `LEADS_URL` (diagnostic.html).
 - `calc.test.js` : contrôles contre des exemples officiels (ACD, CNAP, CSA), et vérification que les montants écrits dans les pages correspondent au moteur.
 
 ## Commandes
@@ -28,5 +29,5 @@ Quand un paramètre change (indexation, nouveau barème), mettre à jour `calc.j
 
 ## À faire
 
-- Brancher le formulaire de rendez-vous (aucune donnée n'est envoyée pour l'instant).
+- Déployer `tools/leads.gs` et renseigner `LEADS_URL` : tant qu'il est vide, le formulaire affiche « ouvre très bientôt ».
 - Rédiger les mentions légales et la politique de confidentialité.

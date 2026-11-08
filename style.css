@@ -373,3 +373,6 @@ footer a:hover{color:var(--ink)}
   .nav::-webkit-scrollbar{display:none}
 }
 .nav a[aria-current="page"]{color:var(--ink);font-weight:600}
+.callout.lead{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:22px}
+.callout.lead p{margin:0;flex:1 1 320px;font-size:14.5px}
+.callout.lead .btn{flex:none}

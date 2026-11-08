@@ -264,16 +264,16 @@
           <div>
             <p class="eyebrow">Rendez-vous</p>
             <h2 style="margin-top:12px">Quand êtes-vous disponible&nbsp;?</h2>
-            <p class="hint">Les créneaux sont calés sur les horaires de frontaliers : tôt le matin, entre midi et deux, ou après 17 h 30 une fois rentré.</p>
+            <p class="hint">Choisissez quand vous préférez être appelé : tôt le matin, entre midi et deux, ou après 17 h 30 une fois rentré. L'expert vous rappelle à ce créneau ou, s'il n'est pas libre, vous propose le plus proche.</p>
             <div class="recap num" id="recap2"></div>
           </div>
           <div class="ctrl">
             <div class="field">
-              <label>Jour</label>
+              <label>Jour souhaité</label>
               <div class="days" id="days"></div>
             </div>
             <div class="field">
-              <label>Heure</label>
+              <label>Heure souhaitée</label>
               <div class="slots" id="slots"></div>
             </div>
             <form class="form" id="form" novalidate>
@@ -282,8 +282,9 @@
                 <input id="fPhone" type="tel" placeholder="Téléphone" autocomplete="tel" required>
               </div>
               <input id="fMail" type="email" placeholder="E-mail (confirmation et rappel)" autocomplete="email" required>
+              <input id="fWeb" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
               <p class="err" id="fErr">Il manque le créneau, le nom, le téléphone ou un e-mail valide.</p>
-              <label class="consent"><input id="fConsent" type="checkbox" required><span>J'accepte d'être rappelé par un expert partenaire de brutnet.lu à propos de mon diagnostic. Aucune revente de données, désinscription en un message.</span></label>
+              <label class="consent"><input id="fConsent" type="checkbox" required><span>J'accepte que mes réponses et mes coordonnées soient transmises à un expert partenaire de brutnet.lu pour être rappelé à propos de mon diagnostic. Aucune revente de données ; suppression sur simple demande par e-mail.</span></label>
             </form>
           </div>
         </div>
@@ -291,13 +292,13 @@
         <!-- done -->
         <div class="done" id="done">
           <div>
-            <p class="eyebrow">Rendez-vous confirmé</p>
+            <p class="eyebrow">Demande envoyée</p>
             <h2 style="margin-top:14px">C'est noté, <span id="dName">—</span>.</h2>
             <p class="when num" id="dWhen">—<span id="dMode">Appel téléphonique · 20 min</span></p>
             <ol>
-              <li><b>Dans 2 minutes</b> : un SMS et un e-mail de confirmation.</li>
-              <li><b>La veille à 18 h</b> : un rappel avec le nom de l'expert qui vous appelle.</li>
-              <li><b>Le jour J</b> : vos chiffres vérifiés sur pièces, et la liste des actions dans l'ordre.</li>
+              <li><b>Sous un jour ouvré</b> : un expert vous contacte par téléphone ou par e-mail pour confirmer le créneau.</li>
+              <li><b>Pendant l'appel</b> : vos chiffres vérifiés sur pièces, et la liste des actions dans l'ordre.</li>
+              <li><b>Ensuite</b> : vous décidez seul si vous voulez aller plus loin avec lui. Le premier appel ne vous coûte rien.</li>
             </ol>
           </div>
           <div class="prep">
@@ -530,14 +531,14 @@
     $("back").hidden = (view==="steps" && step===1);
     if(view==="steps"){ $("stepLab").textContent="Question "+step+" sur 6"; $("next").textContent = step===6 ? "Voir mon pré-diagnostic" : "Continuer"; }
     else if(view==="result"){ $("stepLab").textContent="Pré-diagnostic"; $("next").textContent="Choisir mon créneau"; }
-    else if(view==="book"){ $("stepLab").textContent="Dernière étape"; $("next").textContent="Confirmer le rendez-vous"; }
+    else if(view==="book"){ $("stepLab").textContent="Dernière étape"; $("next").textContent="Être rappelé gratuitement"; }
     var panel=document.querySelector(".panel");
     if(window.scrollY > panel.getBoundingClientRect().top + window.scrollY - 8) panel.scrollIntoView({block:"start"});
   }
   function next(){
     if(view==="steps"){ if(step<6){ step++; } else { compute(); view="result"; } }
     else if(view==="result"){ view="book"; buildDays(); }
-    else if(view==="book"){ if(validate()){ confirm_(); view="done"; } else { return; } }
+    else if(view==="book"){ if(validate()) send(); return; }
     show();
   }
   function back(){
@@ -643,9 +644,7 @@
   function buildSlots(){
     var h="";
     SLOTS.forEach(function(s,i){
-      // quelques créneaux déjà pris, de façon déterministe par jour
-      var taken = S.day!==null && ((S.day*7+i)%5===0);
-      h+='<button class="slot num" type="button" data-s="'+s+'" aria-pressed="false"'+(taken||S.day===null?" disabled":"")+'>'+s+'</button>';
+      h+='<button class="slot num" type="button" data-s="'+s+'" aria-pressed="false"'+(S.day===null?" disabled":"")+'>'+s+'</button>';
     });
     $("slots").innerHTML=h;
     document.querySelectorAll(".slot").forEach(function(b){ b.addEventListener("click",function(){ document.querySelectorAll(".slot").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); S.slot=b.dataset.s; }); });
@@ -661,9 +660,46 @@
     $("dName").textContent=$("fName").value.trim().split(" ")[0];
     var full=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"][d.getDay()]+" "+d.getDate()+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][d.getMonth()]+" à "+S.slot.replace(":"," h ");
     $("dWhen").firstChild.textContent=full.charAt(0).toUpperCase()+full.slice(1);
-    $("dMode").textContent="Appel au "+$("fPhone").value.trim()+" · 20 min";
-    /* En production : POST vers Supabase (table leads) + notification SMS/e-mail. Ici, aucune donnée n'est envoyée. */
+    $("dMode").textContent="Créneau souhaité · appel au "+$("fPhone").value.trim()+" · 20 min";
   }
+
+  /* ---- envoi du lead : Google Apps Script (tools/leads.gs) → feuille « Leads » + e-mail ---- */
+  var LEADS_URL = "";   /* URL du déploiement Apps Script, se termine par /exec */
+  var sending = false;
+  function utm(){
+    var q = new URLSearchParams(location.search), o = {};
+    ["utm_source","utm_medium","utm_campaign","utm_term","utm_content","gclid","fbclid"].forEach(function(k){ if(q.get(k)) o[k]=q.get(k); });
+    try{ var first = JSON.parse(sessionStorage.getItem("bn_first")||"null"); if(first) o.landing = first; }catch(e){}
+    return o;
+  }
+  function payload(){
+    var d = DC.diagnostic(input()), t = d.tax, day = days[S.day];
+    var iso = day.getFullYear()+"-"+String(day.getMonth()+1).padStart(2,"0")+"-"+String(day.getDate()).padStart(2,"0");
+    return {
+      name: $("fName").value.trim(), phone: $("fPhone").value.trim(), email: $("fMail").value.trim(),
+      website: $("fWeb").value, consent: true, day: iso, slot: S.slot,
+      answers: input(),
+      results: { netMonthly: Math.round(d.payslip.net), classNow: String(t.clsNow), pensionAt65: Math.round(d.pension.totalAt65),
+                 taxGainYear: Math.round(t.gainDeclare + t.gainMortgage), taxGainWithSavings: Math.round(t.gainTotal),
+                 loanCapacity: Math.round(d.credit.capital), loanMonthly: Math.round(d.credit.pay) },
+      source: Object.assign({ page: location.pathname, referrer: document.referrer || "" }, utm())
+    };
+  }
+  function send(){
+    if(sending) return;
+    if(!LEADS_URL){ toast("La prise de rendez-vous en ligne ouvre très bientôt."); return; }
+    sending = true; var btn=$("next"), label=btn.textContent; btn.disabled=true; btn.textContent="Envoi…";
+    fetch(LEADS_URL, { method:"POST", body: JSON.stringify(payload()) })   /* text/plain : pas de requête préalable CORS */
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if(!j || !j.ok) throw new Error(j && j.error || "refus");
+        confirm_(); view="done"; show();
+        try{ if(window.gtag) gtag("event","generate_lead"); }catch(e){}
+      })
+      .catch(function(){ toast("L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez."); })
+      .then(function(){ sending=false; btn.disabled=false; btn.textContent=label; });
+  }
+  try{ if(!sessionStorage.getItem("bn_first")) sessionStorage.setItem("bn_first", JSON.stringify(location.pathname+location.search)); }catch(e){}
   $("form").addEventListener("submit",function(e){ e.preventDefault(); next(); });
 
   var tt;
