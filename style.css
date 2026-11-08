@@ -226,7 +226,8 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:0}
 .form .err{font-size:13px;color:var(--lu);display:none}
 .form .err.on{display:block}
 .consent{font-size:12.5px;color:var(--ink-2);display:flex;gap:10px;align-items:flex-start}
-.consent input{width:auto;margin-top:3px}
+.consent{cursor:pointer}
+.consent input{width:22px;height:22px;min-width:22px;margin:0;flex-shrink:0;accent-color:var(--accent,#2D4BFF);cursor:pointer}
 @media (max-width:860px){ .book{padding:26px 18px 22px} .book.on{grid-template-columns:1fr;gap:22px} .days{grid-template-columns:repeat(4,1fr)} .slots{grid-template-columns:repeat(3,1fr)} }
 
 /* ---- confirmation ---- */
