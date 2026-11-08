@@ -164,5 +164,26 @@ console.log('--- Chiffres écrits dans les pages = moteur');
   });
   console.log('ok     montants cités dans la FAQ');
 }
+console.log('--- Pages générées (tools/gen-pages.js) = moteur');
+{
+  const fs = require('fs'), path = require('path');
+  const fmt = n => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/\u202f/g, ' ');
+  const dir = path.join(__dirname, 'salaire-brut-net');
+  const files = fs.readdirSync(dir).map(f => path.join(dir, f))
+    .concat(['tableau-salaire-brut-net-luxembourg.html', 'salaire-minimum-luxembourg.html', 'remboursement-impot-luxembourg.html'].map(f => path.join(__dirname, f)));
+  let n = 0;
+  files.forEach(file => {
+    const page = fs.readFileSync(file, 'utf8');
+    [...page.matchAll(/data-g="([\d.]+)" data-c="(\w+)" data-km="(\d+)">([^<]+)[ \u00a0]€</g)].forEach(m => {
+      n++;
+      const c = m[2] === '1a' ? '1a' : +m[2];
+      const net = DC.payslip(+m[1], c, +m[3], { cim: c === '1a' }).net;
+      m[4] = m[4].replace(/\u00a0/g, ' ');
+      if (fmt(net) !== m[4]) { fails++; console.log('ÉCHEC  ' + path.basename(file) + ' ' + m[1] + ' € classe ' + m[2] + ' ' + m[3] + ' km : page ' + m[4] + ', moteur ' + fmt(net)); }
+    });
+  });
+  if (n < 200) { fails++; console.log('ÉCHEC  seulement ' + n + ' montants trouvés dans les pages générées'); }
+  console.log('ok     ' + n + ' montants dans ' + files.length + ' pages générées');
+}
 console.log(fails ? ('\n' + fails + ' ÉCHEC(S)') : '\nTous les contrôles passent.');
 process.exit(fails ? 1 : 0);
