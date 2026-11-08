@@ -297,9 +297,9 @@
             <h2 style="margin-top:14px">C'est noté, <span id="dName">—</span>.</h2>
             <p class="when num" id="dWhen">—<span id="dMode">Appel téléphonique · 20 min</span></p>
             <ol>
-              <li><b>Sous un jour ouvré</b> : un expert vous contacte par téléphone ou par e-mail pour confirmer le créneau.</li>
+              <li><b>Tout de suite</b> : un e-mail de confirmation avec le résumé de votre diagnostic. Pensez à regarder dans les courriers indésirables.</li>
               <li><b>Pendant l'appel</b> : vos chiffres vérifiés sur pièces, et la liste des actions dans l'ordre.</li>
-              <li><b>Ensuite</b> : vous décidez seul si vous voulez aller plus loin avec lui. Le premier appel ne vous coûte rien.</li>
+              <li><b>Ensuite</b> : vous décidez seul si vous voulez aller plus loin. L'appel ne vous coûte rien.</li>
             </ol>
           </div>
           <div class="prep">
@@ -664,8 +664,8 @@
     $("dMode").textContent="Créneau souhaité · appel au "+$("fPhone").value.trim()+" · 20 min";
   }
 
-  /* ---- envoi du lead par e-mail : FormSubmit (formsubmit.co) → info@brutnet.lu ---- */
-  var LEADS_URL = "https://formsubmit.co/ajax/info@brutnet.lu";
+  /* ---- envoi du lead : fonction Vercel (api-mail/) → e-mail à info@brutnet.lu + confirmation au visiteur ---- */
+  var LEADS_URL = "https://brutnet-api.vercel.app/api/lead";
   var sending = false;
   function utm(){
     var q = new URLSearchParams(location.search), o = {};
@@ -686,38 +686,19 @@
       source: Object.assign({ page: location.pathname, referrer: document.referrer || "" }, utm())
     };
   }
-  function mail(){
-    var d = payload(), a = d.answers, r = d.results, s = d.source;
-    var jour = days[S.day].toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
-    var L = { FR:"France", BE:"Belgique", LU:"Luxembourg", SOON:"pas encore frontalier", couple:"en couple", single:"seul(e)",
-              rent:"locataire", buy:"projet d'achat sous 24 mois", owner:"propriétaire, crédit en cours", paid:"propriétaire, crédit remboursé" };
-    var camp = [s.utm_source,s.utm_medium,s.utm_campaign].filter(Boolean).join(" / ") || (s.gclid ? "Google Ads" : (s.fbclid ? "Facebook" : ""));
-    return {
-      _subject: "Nouveau lead brutnet.lu : " + d.name + ", " + jour + " à " + d.slot,
-      _template: "table", _captcha: "false", _replyto: d.email, _honey: d.website,
-      "Nom": d.name, "Téléphone": d.phone, "E-mail": d.email, "Rappel souhaité": jour + " à " + d.slot,
-      "Résidence": (L[a.residence]||a.residence) + (a.km ? " (" + a.km + " km)" : ""), "Salaire brut": a.salary + " € × " + a.months + " mois",
-      "Âge": a.age + " ans", "Carrière": a.yearsFR + " ans en France, " + a.yearsLU + " ans au Luxembourg",
-      "Foyer": (L[a.family]||a.family) + ", " + a.kids + " enfant(s)" + (a.family==="couple" ? (a.spouseCountry==="none" ? ", conjoint sans revenu" : ", conjoint en " + (L[a.spouseCountry]||a.spouseCountry) + " (" + a.spouseIncome + " € / mois)") : ""),
-      "Logement": L[a.home]||a.home,
-      "Net mensuel": r.netMonthly + " € (classe " + r.classNow + ")", "Retraite à 65 ans": r.pensionAt65 + " € / mois",
-      "Impôt récupérable": r.taxGainYear + " € / an (" + r.taxGainWithSavings + " € avec épargne)",
-      "Capacité d'emprunt": r.loanCapacity + " € (mensualité " + r.loanMonthly + " €)",
-      "Provenance": camp || s.referrer || "accès direct", "Page d'arrivée": s.landing || s.page
-    };
-  }
   function send(){
     if(sending) return;
     if(!LEADS_URL){ toast("La prise de rendez-vous en ligne ouvre très bientôt."); return; }
     sending = true; var btn=$("next"), label=btn.textContent; btn.disabled=true; btn.textContent="Envoi…";
-    fetch(LEADS_URL, { method:"POST", headers:{ "Content-Type":"application/json", "Accept":"application/json" }, body: JSON.stringify(mail()) })
+    var body = payload(); body.dayLabel = days[S.day].toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+    fetch(LEADS_URL, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) })
       .then(function(r){ return r.json(); })
       .then(function(j){
-        if(!j || String(j.success) !== "true") throw new Error(j && j.message || "refus");
+        if(!j || !j.ok) throw new Error(j && j.error || "");
         confirm_(); view="done"; show();
         try{ if(window.gtag) gtag("event","generate_lead"); }catch(e){}
       })
-      .catch(function(){ toast("L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez."); })
+      .catch(function(e){ toast(e && e.message || "L'envoi n'a pas abouti. Vérifiez votre connexion et réessayez."); })
       .then(function(){ sending=false; btn.disabled=false; btn.textContent=label; });
   }
   try{ if(!sessionStorage.getItem("bn_first")) sessionStorage.setItem("bn_first", JSON.stringify(location.pathname+location.search)); }catch(e){}

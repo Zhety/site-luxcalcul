@@ -30,4 +30,4 @@ Quand un paramètre change (indexation, nouveau barème), mettre à jour `calc.j
 ## À faire
 
 - Déployer `tools/leads.gs` et renseigner `LEADS_URL` : tant qu'il est vide, le formulaire affiche « ouvre très bientôt ».
-- Les leads arrivent par e-mail sur info@brutnet.lu via FormSubmit (LEADS_URL dans diagnostic.html). tools/leads.gs reste disponible pour passer à une feuille Google.
+- Leads : `api-mail/` est une fonction Vercel (projet brutnet-api, équipe 100diag) qui envoie le lead à info@brutnet.lu et une confirmation au visiteur, via le SMTP OVH de info@brutnet.lu. Mise à jour : `cd api-mail && npx vercel deploy --prod`. Variables : SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, MAIL_TO.

@@ -1,0 +1,7 @@
+{
+  "name": "brutnet-api",
+  "private": true,
+  "description": "brutnet.lu : envoi des demandes de rappel par e-mail (SMTP OVH info@brutnet.lu).",
+  "engines": { "node": ">=20" },
+  "dependencies": { "nodemailer": "10.2.1" }
+}
