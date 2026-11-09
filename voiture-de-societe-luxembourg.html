@@ -36,9 +36,25 @@
     <a class="logo" href="/"><i aria-hidden="true"></i>brutnet.lu</a>
     <nav class="nav" aria-label="Navigation principale">
       <a href="/">Brut → net</a>
-      <a href="/impot-frontalier">Impôts frontalier</a>
+      <div class="dd cur">
+        <button type="button" class="dd-btn" aria-expanded="false" aria-controls="dd-guide">Guide</button>
+        <div class="dd-menu" id="dd-guide">
+          <div class="dd-col"><p class="dd-h">Impôts</p>
+            <a href="/impot-frontalier"><b>Déclarer ses impôts</b><span>Cases 1AF et 8TK, décompte au Luxembourg</span></a>
+            <a href="/remboursement-impot-luxembourg"><b>Remboursement d'impôt</b><span>Récupérer l'impôt payé en trop</span></a>
+            <a href="/classe-impot-luxembourg"><b>Classe d'impôt</b><span>1, 1a ou 2 : les règles officielles</span></a>
+            <a href="/teletravail-frontalier-luxembourg"><b>Télétravail : 34 jours</b><span>Compteur de jours et seuil de 25 %</span></a>
+          </div>
+          <div class="dd-col"><p class="dd-h">Salaire</p>
+            <a href="/tableau-salaire-brut-net-luxembourg"><b>Tableau brut → net 2026</b><span>Le net de chaque salaire, classes 1, 1a et 2</span></a>
+            <a href="/salaire-minimum-luxembourg"><b>Salaire minimum 2026</b><span>Le salaire social minimum, brut et net</span></a>
+            <a href="/voiture-de-societe-luxembourg" aria-current="page"><b>Voiture de société et leasing</b><span>Avantage en nature et calculateur</span></a>
+          </div>
+        </div>
+      </div>
       <a href="/diagnostic">Retraite et crédit</a>
       <a href="/diagnostic#sources">Méthode</a>
+      <script>(function(){var d=document.currentScript.parentNode.querySelector(".dd"),b=d.querySelector("button");function s(o){d.classList.toggle("open",o);b.setAttribute("aria-expanded",o)}b.addEventListener("click",function(){s(!d.classList.contains("open"))});document.addEventListener("click",function(e){if(!d.contains(e.target))s(false)});document.addEventListener("keydown",function(e){if(e.key==="Escape"&&d.classList.contains("open")){s(false);b.focus()}})})()</script>
     </nav>
     <a class="btn small" href="/diagnostic#diagnostic">Diagnostic gratuit</a>
   </div>

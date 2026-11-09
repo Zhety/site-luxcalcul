@@ -67,16 +67,45 @@ function head({ title, desc, url, type = "article", jsonld }) {
 <header class="top">
   <div class="wrap">
     <a class="logo" href="/"><i aria-hidden="true"></i>brutnet.lu</a>
-    <nav class="nav" aria-label="Navigation principale">
-      <a href="/">Brut → net</a>
-      <a href="/impot-frontalier">Impôts frontalier</a>
-      <a href="/diagnostic">Retraite et crédit</a>
-      <a href="/diagnostic#sources">Méthode</a>
-    </nav>
+    ${nav(url)}
     <a class="btn small" href="/diagnostic#diagnostic">Diagnostic gratuit</a>
   </div>
 </header>
 `;
+}
+
+/* menu « Guide » de l'en-tête : même bloc sur toutes les pages (générées et écrites à la main) */
+const GUIDE = [
+  ["Impôts", [
+    ["/impot-frontalier", "Déclarer ses impôts", "Cases 1AF et 8TK, décompte au Luxembourg"],
+    ["/remboursement-impot-luxembourg", "Remboursement d'impôt", "Récupérer l'impôt payé en trop"],
+    ["/classe-impot-luxembourg", "Classe d'impôt", "1, 1a ou 2 : les règles officielles"],
+    ["/teletravail-frontalier-luxembourg", "Télétravail : 34 jours", "Compteur de jours et seuil de 25 %"],
+  ]],
+  ["Salaire", [
+    ["/tableau-salaire-brut-net-luxembourg", "Tableau brut → net 2026", "Le net de chaque salaire, classes 1, 1a et 2"],
+    ["/salaire-minimum-luxembourg", "Salaire minimum 2026", "Le salaire social minimum, brut et net"],
+    ["/voiture-de-societe-luxembourg", "Voiture de société et leasing", "Avantage en nature et calculateur"],
+  ]],
+];
+const NAV_JS = `(function(){var d=document.currentScript.parentNode.querySelector(".dd"),b=d.querySelector("button");function s(o){d.classList.toggle("open",o);b.setAttribute("aria-expanded",o)}b.addEventListener("click",function(){s(!d.classList.contains("open"))});document.addEventListener("click",function(e){if(!d.contains(e.target))s(false)});document.addEventListener("keydown",function(e){if(e.key==="Escape"&&d.classList.contains("open")){s(false);b.focus()}})})()`;
+function nav(url) {
+  const cur = (u) => (u === url ? ' aria-current="page"' : "");
+  const inGuide = GUIDE.some(([, items]) => items.some(([u]) => u === url));
+  return `<nav class="nav" aria-label="Navigation principale">
+      <a href="/"${cur("/")}>Brut → net</a>
+      <div class="dd${inGuide ? " cur" : ""}">
+        <button type="button" class="dd-btn" aria-expanded="false" aria-controls="dd-guide">Guide</button>
+        <div class="dd-menu" id="dd-guide">
+${GUIDE.map(([h, items]) => `          <div class="dd-col"><p class="dd-h">${h}</p>
+${items.map(([u, t, s]) => `            <a href="${u}"${cur(u)}><b>${t}</b><span>${s}</span></a>`).join("\n")}
+          </div>`).join("\n")}
+        </div>
+      </div>
+      <a href="/diagnostic"${cur("/diagnostic")}>Retraite et crédit</a>
+      <a href="/diagnostic#sources">Méthode</a>
+      <script>${NAV_JS}</script>
+    </nav>`;
 }
 
 const FOOT = `
@@ -907,6 +936,14 @@ fs.writeFileSync(path.join(ROOT, "remboursement-impot-luxembourg.html"), nb(remb
 fs.writeFileSync(path.join(ROOT, "classe-impot-luxembourg.html"), nb(classPage()));
 fs.writeFileSync(path.join(ROOT, "teletravail-frontalier-luxembourg.html"), nb(teleworkPage()));
 fs.writeFileSync(path.join(ROOT, "voiture-de-societe-luxembourg.html"), nb(carPage()));
+
+/* pages écrites à la main : on remplace seulement leur bloc <nav> par le menu commun */
+for (const [file, url] of [["index.html", "/"], ["impot-frontalier.html", "/impot-frontalier"], ["diagnostic.html", "/diagnostic"], ["mentions-legales.html", "/mentions-legales"]]) {
+  const p = path.join(ROOT, file), src = fs.readFileSync(p, "utf8");
+  const out = src.replace(/<nav class="nav"[\s\S]*?<\/nav>/, () => nav(url));
+  if (out === src && !src.includes('class="dd-menu"')) throw new Error(`menu introuvable dans ${file}`);
+  fs.writeFileSync(p, out);
+}
 
 const core = ["/", "/tableau-salaire-brut-net-luxembourg", "/salaire-minimum-luxembourg", "/impot-frontalier", "/remboursement-impot-luxembourg", "/classe-impot-luxembourg", "/teletravail-frontalier-luxembourg", "/voiture-de-societe-luxembourg", "/diagnostic"];
 const urls = [...core, ...AMOUNTS.map(slugOf)];
