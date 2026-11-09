@@ -83,7 +83,7 @@ const FOOT = `
 <footer>
   <div class="wrap">
     <span>© 2026 brutnet.lu · Thionville</span>
-    <div class="links"><a href="/">Salaire brut net Luxembourg</a><a href="/tableau-salaire-brut-net-luxembourg">Tableau brut net 2026</a><a href="/salaire-minimum-luxembourg">Salaire minimum 2026</a><a href="/impot-frontalier">Déclaration d'impôts frontalier</a><a href="/remboursement-impot-luxembourg">Remboursement d'impôt</a><a href="/classe-impot-luxembourg">Classes d'impôt</a><a href="/teletravail-frontalier-luxembourg">Télétravail 34 jours</a><a href="/diagnostic">Retraite et crédit frontalier</a><a href="/diagnostic#sources">Méthode et sources</a><a href="/mentions-legales">Mentions légales</a><a href="/mentions-legales#confidentialite">Confidentialité</a></div>
+    <div class="links"><a href="/">Salaire brut net Luxembourg</a><a href="/tableau-salaire-brut-net-luxembourg">Tableau brut net 2026</a><a href="/salaire-minimum-luxembourg">Salaire minimum 2026</a><a href="/impot-frontalier">Déclaration d'impôts frontalier</a><a href="/remboursement-impot-luxembourg">Remboursement d'impôt</a><a href="/classe-impot-luxembourg">Classes d'impôt</a><a href="/teletravail-frontalier-luxembourg">Télétravail 34 jours</a><a href="/voiture-de-societe-luxembourg">Voiture de société et leasing</a><a href="/diagnostic">Retraite et crédit frontalier</a><a href="/diagnostic#sources">Méthode et sources</a><a href="/mentions-legales">Mentions légales</a><a href="/mentions-legales#confidentialite">Confidentialité</a></div>
   </div>
 </footer>
 
@@ -678,6 +678,223 @@ ${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>
 ` + FOOT;
 }
 
+/* ------------------------------------------------------------------ voiture de société et leasing */
+function carPage() {
+  const url = "/voiture-de-societe-luxembourg";
+  const G = 5000, PRICE = 45000;
+  const atnEv = PRICE * 0.005, atnTh = PRICE * 0.02;
+  const base = D.payslip(G, 1, 0, {}), ev = D.payslip(G, 1, 0, { atn: atnEv }), th = D.payslip(G, 1, 0, { atn: atnTh });
+  const atnCell = (atn, net) => `<td data-g="${G}" data-c="1" data-km="0" data-atn="${atn}">${f2(net)} €</td>`;
+  const title = "Voiture de société et leasing au Luxembourg 2026 : calcul de l'avantage en nature";
+  const desc = "Voiture de société au Luxembourg : avantage en nature de 0,5 % à 2 % du prix catalogue par mois, électrique, hybride, thermique. Calculateur net 2026, leasing opérationnel ou financier, rachat en fin de contrat.";
+  const q = [
+    ["Comment est calculé l'avantage en nature d'une voiture de société au Luxembourg ?", "Chaque mois, un pourcentage du prix d'acquisition du véhicule neuf, options et TVA comprises, remise déduite : 0,5 % ou 0,6 % pour une électrique immatriculée jusqu'en 2026, 2 % pour une thermique ou hybride immatriculée depuis 2025. Ce montant s'ajoute au salaire brut pour les cotisations et l'impôt."],
+    ["Le loyer du leasing sert-il de base de calcul ?", "Non. Pour une voiture en leasing, en location ou d'occasion, on retient la même base que pour un achat : le prix du véhicule à l'état neuf, options et TVA comprises, diminué de la remise."],
+    ["Une hybride rechargeable bénéficie-t-elle d'un taux réduit ?", "Non, plus depuis 2025. Une voiture à moteur thermique, seul ou hybride, immatriculée à partir du 1er janvier 2025 sans contrat signé avant cette date, est évaluée à 2 % par mois."],
+    ["Quel taux pour une voiture de société électrique en 2027 ?", "Pour une électrique immatriculée à partir du 1er janvier 2027 sans contrat signé au plus tard le 31 décembre 2026 : 1 % par mois (consommation jusqu'à 180 Wh/km, ou hydrogène) ou 1,2 %. Une électrique commandée par contrat signé en 2026 et immatriculée jusqu'au 31 décembre 2027 garde 0,5 % ou 0,6 %."],
+    ["Que se passe-t-il si je rachète ma voiture de société en fin de leasing ?", "Si le prix payé est inférieur à la valeur de marché, la différence est un avantage imposable. La valeur de marché se calcule par un barème officiel : 75 % du prix neuf à la mise en service, puis 10 points de moins par an, jusqu'à 0 au bout de 90 mois. L'avantage est plafonné."],
+  ];
+  const buyback = [[12, 65], [24, 55], [36, 45], [48, 35], [60, 25], [72, 15], [84, 5], [90, 0]];
+  return head({ title, desc, url, jsonld: { "@context": "https://schema.org", "@graph": [article("Voiture de société et leasing au Luxembourg : l'avantage en nature en 2026", url), crumbs([["brutnet.lu", "/"], ["Voiture de société et leasing", url]]), faq(q)] } }) + `
+<section class="hero sm">
+  <div class="wrap">
+    <p class="eyebrow">Voiture de société · leasing · Luxembourg · règles en vigueur en 2026</p>
+    <h1 style="margin-top:18px">Voiture de société au Luxembourg : <mark>ce qu'elle coûte sur votre net</mark>.</h1>
+    <p class="lede">Une voiture de société mise à votre disposition est un avantage en nature : chaque mois, <strong>0,5 % à 2 % de son prix catalogue</strong> s'ajoutent à votre brut pour les cotisations et l'impôt. À ${gLabel(G)} € brut, une voiture de ${gLabel(PRICE)} € coûte ${f2(base.net - ev.net)} € net par mois si elle est électrique, ${f2(base.net - th.net)} € si elle est thermique ou hybride.</p>
+  </div>
+</section>
+
+<section class="prose" id="calcul">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Calculateur</p>
+      <h2 style="margin-top:12px">Votre avantage en nature</h2>
+      <p class="intro">Barème du règlement grand-ducal du 23 décembre 2016 modifié, sans frais de déplacement. Calcul d'un mois de novembre 2026.</p>
+    </div>
+    <div>
+      <form class="form ttf" id="car" onsubmit="return false">
+        <label>Prix neuf TTC, options comprises, remise déduite (€)<input id="cPrice" type="number" inputmode="numeric" min="0" step="500" value="${PRICE}"></label>
+        <label>Motorisation<select id="cType">
+          <option value="e1">Électrique, jusqu'à 180 Wh/km (ou 200 Wh/km et 150 kW)</option>
+          <option value="e2">Électrique, autre</option>
+          <option value="h">Hydrogène</option>
+          <option value="t" selected>Thermique ou hybride, dont rechargeable</option>
+        </select></label>
+        <label>Immatriculation<select id="cDate">
+          <option value="now" selected>À partir de 2025, ou contrat signé en 2026</option>
+          <option value="2027">À partir de 2027, sans contrat signé en 2026</option>
+          <option value="old">Thermique immatriculée en 2023 ou 2024</option>
+        </select></label>
+        <label id="cCo2Wrap">CO₂ WLTP (g/km) et carburant<span style="display:flex;gap:8px"><input id="cCo2" type="number" inputmode="numeric" min="1" max="400" value="120"><select id="cFuel"><option value="p">Essence</option><option value="d">Diesel</option></select></span></label>
+        <label>Participation fixe du salarié (€ / mois)<input id="cPart" type="number" inputmode="numeric" min="0" step="10" value="0"></label>
+        <label>Salaire brut mensuel (€)<input id="cGross" type="number" inputmode="numeric" min="0" step="100" value="${G}"></label>
+        <label>Classe d'impôt<select id="cCls"><option value="1">1</option><option value="1a">1a</option><option value="2">2</option></select></label>
+      </form>
+      <table class="ptable ex num" style="margin-top:18px" aria-live="polite">
+        <tbody>
+          <tr><td>Taux mensuel</td><td id="oRate">—</td></tr>
+          <tr><td>Avantage en nature imposable</td><td id="oAtn">—</td></tr>
+          <tr><td>Net sans voiture</td><td id="oNet0">—</td></tr>
+          <tr><td>Net avec la voiture</td><td id="oNet1">—</td></tr>
+          <tr><td><strong>Coût de la voiture sur votre net</strong></td><td id="oCost"><strong>—</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="note">La participation à un leasing n'est déductible que dans la limite de 20 % du coût supporté par l'employeur. Les frais variables que vous payez (carburant, entretien) ne réduisent pas l'avantage.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="taux">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Barème 2026</p>
+      <h2 style="margin-top:12px">Les taux selon la motorisation</h2>
+      <p class="intro">Pourcentage mensuel du prix d'acquisition du véhicule neuf, options et TVA comprises, remise déduite. Même base pour une voiture en leasing, en location ou d'occasion.</p>
+    </div>
+    <div>
+      <table class="ptable">
+        <thead><tr><th>Voiture</th><th>Immatriculée jusqu'au 31/12/2026*</th><th>À partir du 1/1/2027</th></tr></thead>
+        <tbody>
+          <tr><td>Électrique jusqu'à 180 Wh/km, ou jusqu'à 200 Wh/km et 150 kW</td><td>0,5 %</td><td>1 %</td></tr>
+          <tr><td>Autre électrique</td><td>0,6 %</td><td>1,2 %</td></tr>
+          <tr><td>Hydrogène</td><td>0,5 %</td><td>1 %</td></tr>
+          <tr><td>Thermique ou hybride, immatriculée depuis 2025</td><td>2 %</td><td>2 %</td></tr>
+        </tbody>
+      </table>
+      <p class="note">* Ou immatriculée jusqu'au 31 décembre 2027 si le contrat a été signé au plus tard le 31 décembre 2026. Les voitures thermiques immatriculées en 2023 ou 2024 (ou commandées avant 2025 et immatriculées en 2025) restent au barème CO₂ : de 0,8 % à 1,8 % en essence, de 1 % à 1,8 % en diesel.</p>
+      <table class="ptable" style="margin-top:14px">
+        <thead><tr><th>CO₂, voitures de 2023-2024</th><th>Essence, seule ou hybride</th><th>Diesel, seul ou hybride</th></tr></thead>
+        <tbody>
+          <tr><td>jusqu'à 50 g/km</td><td>0,8 %</td><td>1,0 %</td></tr>
+          <tr><td>50 à 80 g/km</td><td>1,0 %</td><td>1,2 %</td></tr>
+          <tr><td>80 à 110 g/km</td><td>1,2 %</td><td>1,4 %</td></tr>
+          <tr><td>110 à 130 g/km</td><td>1,5 %</td><td>1,6 %</td></tr>
+          <tr><td>plus de 130 g/km</td><td>1,8 %</td><td>1,8 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="exemple">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Exemple</p>
+      <h2 style="margin-top:12px">${gLabel(G)} € brut, voiture de ${gLabel(PRICE)} €</h2>
+      <p class="intro">Classe 1, sans frais de déplacement, sans participation du salarié.</p>
+    </div>
+    <div>
+      <table class="ptable ex num">
+        <thead><tr><th>Situation</th><th>Avantage / mois</th><th>Net</th><th>Coût net / mois</th></tr></thead>
+        <tbody>
+          <tr><td>Sans voiture de société</td><td>—</td>${cell(G, 1, 0, base.net)}<td>—</td></tr>
+          <tr><td>Électrique, 0,5 %</td><td>${f2(atnEv)} €</td>${atnCell(atnEv, ev.net)}<td>${f2(base.net - ev.net)} €</td></tr>
+          <tr><td>Thermique ou hybride, 2 %</td><td>${f2(atnTh)} €</td>${atnCell(atnTh, th.net)}<td>${f2(base.net - th.net)} €</td></tr>
+        </tbody>
+      </table>
+      <p class="note">L'avantage en nature est soumis aux cotisations sociales et à la retenue d'impôt comme du salaire, mais il n'est pas versé : il réduit le net. Frontalier : il fait partie du montant à déclarer en France (cases 1AF et 8TK).</p>
+      ${LEAD}
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="leasing">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Leasing</p>
+      <h2 style="margin-top:12px">Leasing opérationnel, financier, privé : les différences</h2>
+      <p class="intro">Pour l'avantage en nature du salarié, le type de contrat ne change rien : la base reste le prix neuf du véhicule. Il change en revanche qui supporte les risques et ce qui se passe en fin de contrat.</p>
+    </div>
+    <div>
+      <table class="ptable">
+        <thead><tr><th></th><th>Leasing opérationnel</th><th>Leasing financier</th></tr></thead>
+        <tbody>
+          <tr><td>Aussi appelé</td><td>location longue durée, renting</td><td>crédit-bail</td></tr>
+          <tr><td>Propriétaire</td><td>la société de leasing, pendant et après le contrat</td><td>la société de leasing, jusqu'à la levée de l'option</td></tr>
+          <tr><td>Loyer</td><td>usage du véhicule, souvent avec entretien, pneus, assurance et assistance</td><td>financement du véhicule, services en général à part</td></tr>
+          <tr><td>Fin de contrat</td><td>restitution du véhicule, frais si kilométrage ou état non conformes</td><td>option d'achat à un prix fixé d'avance</td></tr>
+          <tr><td>Risque de revente</td><td>pour le loueur</td><td>pour le preneur</td></tr>
+          <tr><td>Pour qui</td><td>flottes de voitures de société, budget mensuel fixe</td><td>entreprise ou indépendant qui veut garder le véhicule</td></tr>
+        </tbody>
+      </table>
+      <div class="txt" style="margin-top:20px">
+        <h3>Leasing privé payé par l'employeur</h3>
+        <p>Si vous prenez vous-même une voiture en leasing et que l'employeur en rembourse tout ou partie, ce n'est plus une voiture de société : le remboursement est du <strong>salaire imposable</strong>, forfait ou frais réels. Le barème de 0,5 % à 2 % ne s'applique pas.</p>
+        <h3>Voiture contre baisse de salaire</h3>
+        <p>Si l'employeur vous donne une voiture en échange d'une réduction de votre salaire en espèces, l'évaluation forfaitaire ne s'applique pas : la baisse de salaire est comparée à la valeur réelle de l'avantage.</p>
+        <h3>Le carnet de bord, alternative au forfait</h3>
+        <p>À la place du pourcentage, l'avantage peut être calculé au kilomètre privé réel : vous tenez un carnet de bord de tous vos trajets privés, domicile-travail compris, et l'employeur applique le prix de revient kilométrique de la voiture. Le carnet est joint au compte de salaire.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="rachat">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Fin de leasing</p>
+      <h2 style="margin-top:12px">Racheter sa voiture de société</h2>
+      <p class="intro">Si vous rachetez la voiture moins cher que sa valeur de marché, la différence est un avantage imposable.</p>
+    </div>
+    <div>
+      <table class="ptable ex num">
+        <thead><tr><th>Âge du véhicule</th><th>Valeur de marché, en % du prix neuf</th></tr></thead>
+        <tbody>
+          <tr><td>mise en service</td><td>75 %</td></tr>
+${buyback.map(([m, p]) => `          <tr><td>${m} mois</td><td>${p} %</td></tr>`).join("\n")}
+        </tbody>
+      </table>
+      <p class="note">Barème officiel : 75 % du prix neuf, moins 0,8333 point par mois. En cas de désaccord, une expertise d'un professionnel de l'automobile peut fixer une autre valeur. L'avantage total (mise à disposition au taux de 1,5 % puis rachat) est plafonné au prix d'acquisition, diminué de vos participations déductibles.</p>
+      <div class="txt" style="margin-top:14px"><p>Exemple de l'administration : voiture de 30 000 € rachetée au bout de 48 mois pour l'option d'achat de 3 000 € (10 %), alors que le barème la vaut 10 500 € (35 %). L'avantage théorique est de 7 500 €, ramené au plafond de 5 400 € compte tenu de l'avantage déjà imposé et des participations.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <div>
+${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>`).join("\n")}
+    </div>
+  </div>
+</section>
+
+<section class="prose">
+  <div class="wrap">
+    <div><p class="eyebrow">Sources</p></div>
+    <div class="txt"><p class="note"><a href="https://conseil-etat.public.lu/content/dam/conseil_etat/fr/avis/2024/10122024/62013-texte-du-projet-de-rglement-grand-ducal-02122024.pdf" rel="noopener">Règlement grand-ducal du 23 décembre 2016, texte coordonné</a> · <a href="https://impotsdirects.public.lu/fr/archive/newsletter/2025/nl10012025.html" rel="noopener">ACD, prolongation des taux électriques (règlement du 20 décembre 2024)</a> · <a href="https://impotsdirects.public.lu/dam-assets/fr/legislation/legi18/circulaireLIR-104-1du16072018.pdf" rel="noopener">circulaire L.I.R. n° 104/1 du 16 juillet 2018</a> · <a href="https://impotsdirects.public.lu/fr/az/a/avant_nature.html" rel="noopener">ACD, avantages en nature</a></p></div>
+  </div>
+</section>
+
+<script src="/calc.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var f=function(n){return n.toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+"\\u00a0€"};
+  function rate(){
+    var t=$("cType").value, d=$("cDate").value;
+    if(d==="old"){ var c=+$("cCo2").value||0, di=$("cFuel").value==="d";
+      var T=di?[[50,1],[80,1.2],[110,1.4],[130,1.6],[1e9,1.8]]:[[50,.8],[80,1],[110,1.2],[130,1.5],[1e9,1.8]];
+      for(var i=0;i<T.length;i++) if(c<=T[i][0]) return T[i][1]; }
+    if(t==="t") return 2;
+    var late=d==="2027";
+    return t==="e2" ? (late?1.2:0.6) : (late?1:0.5);
+  }
+  function upd(){
+    var old=$("cDate").value==="old"; $("cCo2Wrap").style.display=old?"":"none";
+    if(old){ $("cType").value="t"; }
+    var r=rate(), price=Math.max(0,+$("cPrice").value||0), part=Math.max(0,+$("cPart").value||0);
+    var atn=Math.max(0,price*r/100-part), g=Math.max(0,+$("cGross").value||0), cls=$("cCls").value; cls=cls==="1a"?"1a":+cls;
+    var o={cim:cls==="1a"}, n0=DC.payslip(g,cls,0,o).net, o1={cim:cls==="1a",atn:atn}, n1=DC.payslip(g,cls,0,o1).net;
+    $("oRate").textContent=(r+"").replace(".",",")+"\\u00a0% par mois"; $("oAtn").textContent=f(atn);
+    $("oNet0").textContent=f(n0); $("oNet1").textContent=f(n1); $("oCost").innerHTML="<strong>"+f(n0-n1)+" par mois</strong>";
+  }
+  ["cPrice","cType","cDate","cCo2","cFuel","cPart","cGross","cCls"].forEach(function(i){$(i).addEventListener("input",upd);$(i).addEventListener("change",upd)}); upd();
+})();
+</script>
+` + FOOT;
+}
+
 /* montants insécables : « 3 151,96 € » ne se coupe pas en fin de ligne */
 const nb = (html) => html.replace(/(\d) (?=\d{3}\b|€|%)/g, "$1\u00a0");
 
@@ -689,8 +906,9 @@ fs.writeFileSync(path.join(ROOT, "salaire-minimum-luxembourg.html"), nb(ssmPage(
 fs.writeFileSync(path.join(ROOT, "remboursement-impot-luxembourg.html"), nb(rembPage()));
 fs.writeFileSync(path.join(ROOT, "classe-impot-luxembourg.html"), nb(classPage()));
 fs.writeFileSync(path.join(ROOT, "teletravail-frontalier-luxembourg.html"), nb(teleworkPage()));
+fs.writeFileSync(path.join(ROOT, "voiture-de-societe-luxembourg.html"), nb(carPage()));
 
-const core = ["/", "/tableau-salaire-brut-net-luxembourg", "/salaire-minimum-luxembourg", "/impot-frontalier", "/remboursement-impot-luxembourg", "/classe-impot-luxembourg", "/teletravail-frontalier-luxembourg", "/diagnostic"];
+const core = ["/", "/tableau-salaire-brut-net-luxembourg", "/salaire-minimum-luxembourg", "/impot-frontalier", "/remboursement-impot-luxembourg", "/classe-impot-luxembourg", "/teletravail-frontalier-luxembourg", "/voiture-de-societe-luxembourg", "/diagnostic"];
 const urls = [...core, ...AMOUNTS.map(slugOf)];
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
