@@ -87,7 +87,9 @@ const GUIDE = [
     ["/tableau-salaire-brut-net-luxembourg", "Tableau brut → net 2026", "Le net de chaque salaire, classes 1, 1a et 2"],
     ["/salaire-minimum-luxembourg", "Salaire minimum 2026", "Le salaire social minimum, brut et net"],
     ["/voiture-de-societe-luxembourg", "Voiture de société et leasing", "Avantage en nature et calculateur"],
-    ["/metiers-luxembourg", "Métiers et salaires", "Les mieux payés, ceux qui recrutent"],
+    ["/metiers-luxembourg", "Métiers les mieux payés", "Salaire par profession et secteur"],
+    ["/metiers-qui-recrutent-luxembourg", "Métiers qui recrutent", "Offres 2026 et métiers en pénurie"],
+    ["/entreprises-qui-recrutent-luxembourg", "Entreprises qui recrutent", "Les plus gros employeurs et embauches"],
   ]],
 ];
 const NAV_JS = `(function(){var d=document.currentScript.parentNode.querySelector(".dd"),b=d.querySelector("button");function s(o){d.classList.toggle("open",o);b.setAttribute("aria-expanded",o)}b.addEventListener("click",function(){s(!d.classList.contains("open"))});document.addEventListener("click",function(e){if(!d.contains(e.target))s(false)});document.addEventListener("keydown",function(e){if(e.key==="Escape"&&d.classList.contains("open")){s(false);b.focus()}})})()`;
@@ -114,7 +116,7 @@ const FOOT = `
 <footer>
   <div class="wrap">
     <span>© 2026 brutnet.lu · Thionville</span>
-    <div class="links"><a href="/">Salaire brut net Luxembourg</a><a href="/tableau-salaire-brut-net-luxembourg">Tableau brut net 2026</a><a href="/salaire-minimum-luxembourg">Salaire minimum 2026</a><a href="/impot-frontalier">Déclaration d'impôts frontalier</a><a href="/remboursement-impot-luxembourg">Remboursement d'impôt</a><a href="/classe-impot-luxembourg">Classes d'impôt</a><a href="/credit-impot-luxembourg">Crédits d'impôt 2026</a><a href="/teletravail-frontalier-luxembourg">Télétravail 34 jours</a><a href="/voiture-de-societe-luxembourg">Voiture de société et leasing</a><a href="/metiers-luxembourg">Métiers et salaires</a><a href="/diagnostic">Retraite et crédit frontalier</a><a href="/diagnostic#sources">Méthode et sources</a><a href="/mentions-legales">Mentions légales</a><a href="/mentions-legales#confidentialite">Confidentialité</a></div>
+    <div class="links"><a href="/">Salaire brut net Luxembourg</a><a href="/tableau-salaire-brut-net-luxembourg">Tableau brut net 2026</a><a href="/salaire-minimum-luxembourg">Salaire minimum 2026</a><a href="/impot-frontalier">Déclaration d'impôts frontalier</a><a href="/remboursement-impot-luxembourg">Remboursement d'impôt</a><a href="/classe-impot-luxembourg">Classes d'impôt</a><a href="/credit-impot-luxembourg">Crédits d'impôt 2026</a><a href="/teletravail-frontalier-luxembourg">Télétravail 34 jours</a><a href="/voiture-de-societe-luxembourg">Voiture de société et leasing</a><a href="/metiers-luxembourg">Métiers les mieux payés</a><a href="/metiers-qui-recrutent-luxembourg">Métiers qui recrutent</a><a href="/entreprises-qui-recrutent-luxembourg">Entreprises qui recrutent</a><a href="/diagnostic">Retraite et crédit frontalier</a><a href="/diagnostic#sources">Méthode et sources</a><a href="/mentions-legales">Mentions légales</a><a href="/mentions-legales#confidentialite">Confidentialité</a></div>
   </div>
 </footer>
 
@@ -1285,21 +1287,20 @@ const SHORT = [
 function jobsPage() {
   const url = "/metiers-luxembourg";
   const top = ISCO[0], low = ISCO[ISCO.length - 1];
-  const title = "Métiers les mieux payés et qui recrutent au Luxembourg en 2026";
-  const desc = `Salaire moyen par métier et par secteur au Luxembourg (STATEC), métiers qui recrutent le plus en 2026 et liste officielle des 20 métiers en pénurie (ADEM). Avec le net en 2026 pour un frontalier.`;
+  const title = "Métiers les mieux payés au Luxembourg en 2026 : salaire par profession et secteur";
+  const desc = `Quels métiers paient le plus au Luxembourg ? Salaire moyen brut par profession et par secteur (STATEC), avec le net en 2026 pour un frontalier. Directeurs 158 242 € par an, finance 113 018 €, horeca 40 461 €.`;
   const q = [
     ["Quel est le métier le mieux payé au Luxembourg ?", `Les directeurs, cadres de direction et gérants : ${f0(top[2])} € brut par an en moyenne en équivalent temps plein, primes comprises, selon l'enquête du STATEC sur 2022. Viennent ensuite les professions intellectuelles et scientifiques (ingénieurs, informaticiens, juristes, médecins...) avec ${f0(ISCO[1][2])} €. Par secteur, la finance paie le plus en moyenne (113 018 €), l'enseignement le plus en médiane (108 929 €).`],
-    ["Quels métiers recrutent le plus au Luxembourg en 2026 ?", "D'après l'ADEM, de janvier à septembre 2026 : le développement informatique (480 offres), la comptabilité (404), l'éducation de jeunes enfants (336), les soins infirmiers (293), l'intervention socioéducative (273) et l'expertise en systèmes d'information (269). Le secteur public, premier employeur du pays, recrute à part sur govjobs.public.lu."],
-    ["Quels sont les métiers en pénurie au Luxembourg en 2026 ?", "La liste officielle de l'ADEM compte 20 métiers : audit et expertise comptable, développement et systèmes informatiques, juristes et fiscalistes, banque (crédit, KYC, clientèle, marchés), analyse financière, infirmiers et aides-soignants, éducateurs, assistants sociaux, ingénieurs R&D et qualité, maintenance industrielle, couvreurs et carrossiers."],
+    ["Les métiers qui recrutent sont-ils bien payés ?", "Souvent, oui. Contrairement à d'autres pays, les métiers déclarés très en pénurie au Luxembourg se situent plutôt en haut de l'échelle des salaires, selon le STATEC : audit, finance, informatique, droit. Les soins et l'éducation figurent aussi dans la liste. Le détail est sur la page des métiers qui recrutent."],
     ["Quel est le salaire moyen au Luxembourg ?", "75 919 € brut par an pour un temps plein en 2022, primes, heures supplémentaires et 13ᵉ mois compris, selon le STATEC. Le salaire médian est de 58 126 € : la moitié des salariés gagne moins. Les salaires ont depuis été relevés par l'indexation."],
     ["Un frontalier gagne-t-il moins qu'un résident au Luxembourg ?", "En moyenne oui : 65 487 € brut par an pour un frontalier en 2022, contre 92 093 € pour un résident de nationalité luxembourgeoise et 78 747 € pour un résident étranger (STATEC). À poste et salaire égaux, les cotisations sont les mêmes ; seule la classe d'impôt peut changer le net."],
   ];
   const netCell = (yr) => { const g = Math.round(yr / 12 * 100) / 100; return cell(g, 1, 0, D.payslip(g, 1, 0, {}).net); };
-  return head({ title, desc, url, jsonld: { "@context": "https://schema.org", "@graph": [article("Métiers les mieux payés et métiers qui recrutent au Luxembourg", url), crumbs([["brutnet.lu", "/"], ["Métiers et salaires", url]]), faq(q)] } }) + `
+  return head({ title, desc, url, jsonld: { "@context": "https://schema.org", "@graph": [article("Les métiers les mieux payés au Luxembourg", url), crumbs([["brutnet.lu", "/"], ["Métiers les mieux payés", url]]), faq(q)] } }) + `
 <section class="hero sm">
   <div class="wrap">
-    <p class="eyebrow">Métiers · salaires · recrutement · Luxembourg · mis à jour le 11 novembre 2026</p>
-    <h1 style="margin-top:18px">Les métiers qui paient le plus au Luxembourg, <mark>et ceux qui recrutent</mark>.</h1>
+    <p class="eyebrow">Métiers · salaires · Luxembourg · mis à jour le 11 novembre 2026</p>
+    <h1 style="margin-top:18px">Les métiers qui paient le plus <mark>au Luxembourg</mark>.</h1>
     <p class="lede">Un directeur gagne en moyenne <strong>${f0(top[2])} € brut par an</strong>, près de quatre fois plus qu'un salarié d'une profession élémentaire (${f0(low[2])} €). Et au Luxembourg, les métiers qui manquent de candidats sont plutôt en haut de l'échelle : finance, audit, informatique, droit, mais aussi soins et éducation.</p>
   </div>
 </section>
@@ -1347,43 +1348,13 @@ ${NACE.map(([n, m, md]) => `          <tr><td>${n}</td><td>${f0(m)} €</td><td>
 <section class="prose" id="recrutent">
   <div class="wrap">
     <div>
-      <p class="eyebrow">Recrutement 2026</p>
-      <h2 style="margin-top:12px">Les métiers qui recrutent le plus</h2>
-      <p class="intro">Offres d'emploi de l'ADEM sur janvier-septembre 2026 et, parmi les offres non publiées, celles pour lesquelles l'ADEM n'a envoyé aucun candidat à l'employeur.</p>
+      <p class="eyebrow">Recrutement</p>
+      <h2 style="margin-top:12px">Les métiers qui recrutent sont souvent bien payés</h2>
+      <p class="intro">Au Luxembourg, les métiers qui manquent de candidats se situent plutôt en haut de l'échelle des salaires, selon le STATEC.</p>
     </div>
-    <div>
-      <div class="tscroll"><table class="ptable ex num">
-        <thead><tr><th>Métier</th><th>Offres</th><th>Sans candidat</th></tr></thead>
-        <tbody>
-${HIRING.map(([c, n, o, s]) => `          <tr><td>${n}<small>${c}</small></td><td>${o}</td><td>${s}</td></tr>`).join("\n")}
-        </tbody>
-      </table></div>
-      <div class="txt" style="margin-top:18px">
-        <p>En septembre 2026, les employeurs ont déclaré <strong>3 300 postes</strong> à l'ADEM et <strong>6 632 offres</strong> étaient ouvertes en fin de mois. Sur un an, les offres progressent le plus dans les soins paramédicaux, l'action sociale et socio-éducative, l'informatique, les métiers de bouche et l'aide à la vie quotidienne.</p>
-        <p>D'autres métiers ont beaucoup d'offres sans être en pénurie, parce que les candidats sont nombreux : cuisine, secrétariat, service en restauration. Le secteur public ne passe pas par l'ADEM : l'État et les communes publient leurs postes sur govjobs.public.lu.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="prose" id="penurie">
-  <div class="wrap">
-    <div>
-      <p class="eyebrow">Pénurie</p>
-      <h2 style="margin-top:12px">Les 20 métiers très en pénurie en 2026</h2>
-      <p class="intro">Liste officielle de l'ADEM, établie sur l'année 2025 : au moins 7 offres par mois en moyenne, trop peu de demandeurs d'emploi et une part élevée d'offres sans candidat. Elle était de 29 métiers en 2023, 24 en 2024 et 22 en 2025.</p>
-    </div>
-    <div>
-      <div class="tscroll"><table class="ptable ex num">
-        <thead><tr><th>Métier</th><th>Postes vacants / mois en 2025</th></tr></thead>
-        <tbody>
-${SHORT.map(([c, n, ex, v]) => `          <tr><td>${n}<small>${ex} · ${c}</small></td><td>${v}</td></tr>`).join("\n")}
-        </tbody>
-      </table></div>
-      <div class="txt" style="margin-top:18px">
-        <p>Contrairement à d'autres pays, ces métiers en pénurie paient plutôt bien : selon le STATEC, la grande majorité des branches qui les recherchent dépasse largement le salaire horaire moyen. Les plus tendus en 2025 : les soins paramédicaux, avec <strong>un demandeur d'emploi pour deux offres</strong>, puis la mécanique et le travail des métaux.</p>
-        <p>Pour l'employeur, la liste simplifie l'embauche de candidats hors Union européenne. Un frontalier citoyen de l'Union européenne n'a, lui, besoin d'aucune autorisation de travail.</p>
-      </div>
+    <div class="txt">
+      <p>De janvier à septembre 2026, l'ADEM a recensé le plus d'offres en développement informatique (480), en comptabilité (404), en éducation de jeunes enfants (336) et en soins infirmiers (293). Vingt métiers sont officiellement « très en pénurie » en 2026, de l'audit aux aides-soignants.</p>
+      <p><a href="/metiers-qui-recrutent-luxembourg"><strong>Voir les métiers qui recrutent le plus et la liste des métiers en pénurie →</strong></a></p>
     </div>
   </div>
 </section>
@@ -1427,6 +1398,322 @@ ${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>
 ` + FOOT;
 }
 
+/* STATEC, Note de conjoncture 1-2026 (étude 7.2), graphique B : demandeurs d'emploi par offre en 2025 (familles ROME) */
+const RATIO = [
+  ["J15", "Soins paramédicaux (infirmiers, aides-soignants)", 0.5], ["H29", "Mécanique, travail des métaux et outillage", 0.7],
+  ["N44", "Personnel sédentaire du transport ferroviaire", 0.8], ["I13", "Équipements de production et équipements collectifs", 0.8],
+  ["K12", "Action sociale et socio-éducative", 1.1], ["H12", "Conception, recherche, études et développement", 1.2],
+  ["K19", "Droit", 1.3], ["M12", "Comptabilité et gestion", 1.3], ["C12", "Banque", 1.4], ["C13", "Finance", 1.4],
+  ["M18", "Systèmes d'information et télécommunication", 1.5], ["I16", "Véhicules, engins, aéronefs", 1.5],
+  ["H15", "Qualité et analyses industrielles", 1.7], ["F16", "Second œuvre du bâtiment", 2.8],
+];
+/* même étude, tableau B : part des sous-branches dans les offres de métiers très en pénurie, 2022-2025 */
+const BRANCH = [
+  ["Activités comptables (audit, expertise comptable)", 37.0], ["Banques (intermédiation monétaire)", 7.7],
+  ["Programmation, conseil et activités informatiques", 6.2], ["Gestion de fonds", 4.2], ["Conseil de gestion", 3.1],
+  ["Agences de travail temporaire", 2.3], ["Sièges sociaux", 2.2], ["Action sociale sans hébergement", 2.2],
+];
+
+function recruitPage() {
+  const url = "/metiers-qui-recrutent-luxembourg";
+  const title = "Quels métiers recrutent le plus au Luxembourg en 2026 ? Offres et pénuries";
+  const desc = "Les métiers qui recrutent le plus au Luxembourg en 2026 d'après l'ADEM : informatique, comptabilité, éducation, soins infirmiers. Les 20 métiers en pénurie, les secteurs qui embauchent et où postuler quand on est frontalier.";
+  const q = [
+    ["Quels métiers recrutent le plus au Luxembourg en 2026 ?", "D'après l'ADEM, de janvier à septembre 2026 : le développement informatique (480 offres), la comptabilité (404), l'éducation de jeunes enfants (336), les soins infirmiers (293), l'intervention socioéducative (273) et l'expertise en systèmes d'information (269). Le secteur public, premier employeur du pays, recrute à part sur govjobs.public.lu."],
+    ["Quels sont les métiers en pénurie au Luxembourg en 2026 ?", "La liste officielle de l'ADEM compte 20 métiers : audit et expertise comptable, développement et systèmes informatiques, juristes et fiscalistes, banque (crédit, KYC, clientèle, marchés), analyse financière, infirmiers et aides-soignants, éducateurs, assistants sociaux, ingénieurs R&D et qualité, maintenance industrielle, couvreurs et carrossiers."],
+    ["Quel secteur recrute le plus au Luxembourg ?", "Les services aux entreprises, et d'abord l'audit et l'expertise comptable : entre 2022 et 2025, les activités comptables ont concentré 37 % des offres des métiers très en pénurie, alors qu'elles ne pèsent que 3,7 % de l'emploi salarié. Suivent les banques, l'informatique, la gestion de fonds, la santé et l'action sociale."],
+    ["Dans quels métiers trouve-t-on le plus facilement un emploi au Luxembourg ?", "Là où il y a le moins de candidats par offre. En 2025, les soins paramédicaux comptaient un demandeur d'emploi pour deux offres, la mécanique et le travail des métaux 0,7 demandeur par offre, la maintenance d'équipements industriels 0,8, l'action sociale 1,1."],
+    ["Un frontalier peut-il s'inscrire à l'ADEM pour chercher un emploi ?", "Oui. Un non-résident peut s'inscrire comme demandeur d'emploi à l'ADEM, même s'il n'y touche pas d'indemnités : fin septembre 2026, 1 917 non-résidents y étaient inscrits de leur propre initiative. En règle générale, le chômage d'un frontalier est versé par son pays de résidence."],
+    ["Combien gagne-t-on dans les métiers qui recrutent au Luxembourg ?", "Les métiers en pénurie se situent plutôt en haut de l'échelle des salaires, selon le STATEC. En 2022, une profession intellectuelle et scientifique (informaticien, juriste, ingénieur, infirmier...) gagnait en moyenne 97 772 € brut par an, primes comprises."],
+  ];
+  return head({ title, desc, url, jsonld: { "@context": "https://schema.org", "@graph": [article("Quels métiers recrutent le plus au Luxembourg en 2026", url), crumbs([["brutnet.lu", "/"], ["Métiers qui recrutent", url]]), faq(q),
+    { "@type": "ItemList", name: "Métiers avec le plus d'offres d'emploi à l'ADEM, janvier-septembre 2026", itemListElement: HIRING.map(([c, n], i) => ({ "@type": "ListItem", position: i + 1, name: n })) }] } }) + `
+<section class="hero sm">
+  <div class="wrap">
+    <p class="eyebrow">Emploi · Luxembourg · chiffres de l'ADEM et du STATEC · mis à jour le 11 novembre 2026</p>
+    <h1 style="margin-top:18px">Quels métiers recrutent le plus <mark>au Luxembourg en 2026</mark> ?</h1>
+    <p class="lede">De janvier à septembre 2026, le <strong>développement informatique</strong> arrive en tête des offres d'emploi de l'ADEM (480), devant la <strong>comptabilité</strong> (404), l'<strong>éducation de jeunes enfants</strong> (336) et les <strong>soins infirmiers</strong> (293). Vingt métiers sont officiellement en pénurie, et la plupart paient bien.</p>
+    <div class="callout" style="max-width:68ch;margin-top:26px">
+      <strong>Septembre 2026 :</strong> les employeurs ont déclaré <strong>3 300 postes</strong> à l'ADEM et <strong>6 632 offres</strong> étaient ouvertes en fin de mois. Ces chiffres ne comptent pas l'État et les communes, qui recrutent sur govjobs.public.lu.
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="top">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Classement 2026</p>
+      <h2 style="margin-top:12px">Les métiers avec le plus d'offres d'emploi</h2>
+      <p class="intro">Offres de l'ADEM sur janvier-septembre 2026 et, parmi les offres non publiées, celles pour lesquelles l'ADEM n'a envoyé aucun candidat à l'employeur.</p>
+    </div>
+    <div>
+      <div class="tscroll"><table class="ptable ex num">
+        <thead><tr><th>Métier</th><th>Offres</th><th>Sans candidat</th></tr></thead>
+        <tbody>
+${HIRING.map(([c, n, o, s], i) => `          <tr><td>${i + 1}. ${n}<small>code ROME ${c}</small></td><td>${o}</td><td>${s}</td></tr>`).join("\n")}
+        </tbody>
+      </table></div>
+      <p class="note">En septembre 2026, l'informatique (262 postes) et la comptabilité-gestion (254) restaient les deux familles où les employeurs déclaraient le plus de postes. D'autres métiers ont beaucoup d'offres sans être en pénurie, car les candidats y sont nombreux : cuisine, secrétariat, service en restauration.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="hausse">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Tendance</p>
+      <h2 style="margin-top:12px">Les métiers où les offres augmentent</h2>
+      <p class="intro">Hausse du nombre d'offres ouvertes fin septembre 2026 par rapport à fin septembre 2025, selon l'ADEM.</p>
+    </div>
+    <div>
+      <table class="ptable ex num">
+        <thead><tr><th>Famille de métiers</th><th>Offres en plus</th><th>Hausse</th></tr></thead>
+        <tbody>
+          <tr><td>Soins paramédicaux<small>infirmiers, aides-soignants</small></td><td>+ 121</td><td>+ 65 %</td></tr>
+          <tr><td>Action sociale, socio-éducative et socio-culturelle<small>éducateurs, assistants sociaux</small></td><td>+ 104</td><td>+ 62 %</td></tr>
+          <tr><td>Informatique<small>systèmes d'information et télécommunication</small></td><td>+ 69</td><td>+ 16 %</td></tr>
+          <tr><td>Commerce alimentaire et métiers de bouche<small>boulangers, bouchers, vendeurs en alimentation</small></td><td>+ 58</td><td>+ 100 %</td></tr>
+        </tbody>
+      </table>
+      <p class="note">L'informatique attire aussi plus de candidats : +108 demandeurs d'emploi résidents en un an (+18 %). La banque en compte 82 de plus (+27 %). Au total, l'ADEM comptait 20 269 demandeurs d'emploi résidents fin septembre 2026, pour un taux de chômage de 6,5 %.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="candidats">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Peu de concurrence</p>
+      <h2 style="margin-top:12px">Les métiers où il y a le moins de candidats</h2>
+      <p class="intro">Nombre de demandeurs d'emploi inscrits à l'ADEM pour une offre, en moyenne en 2025. Sous 1, il y a plus d'offres que de candidats.</p>
+    </div>
+    <div>
+      <table class="ptable ex num">
+        <thead><tr><th>Famille de métiers</th><th>Demandeurs par offre</th></tr></thead>
+        <tbody>
+${RATIO.map(([c, n, r]) => `          <tr><td>${n}<small>${c}</small></td><td>${String(r).replace(".", ",")}</td></tr>`).join("\n")}
+        </tbody>
+      </table>
+      <p class="note">Familles qui contiennent au moins un métier en pénurie. La conduite de transport, la maintenance informatique et la conduite d'engins logistiques ont des ratios encore plus bas, mais trop peu d'offres pour être classées en pénurie.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="penurie">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Liste officielle</p>
+      <h2 style="margin-top:12px">Les 20 métiers très en pénurie en 2026</h2>
+      <p class="intro">Liste de l'ADEM établie sur l'année 2025 : au moins 7 offres par mois en moyenne, trop peu de demandeurs d'emploi et une part élevée d'offres sans candidat. Elle comptait 29 métiers en 2023, 24 en 2024 et 22 en 2025.</p>
+    </div>
+    <div>
+      <div class="tscroll"><table class="ptable ex num">
+        <thead><tr><th>Métier</th><th>Postes vacants / mois en 2025</th></tr></thead>
+        <tbody>
+${SHORT.map(([c, n, ex, v]) => `          <tr><td>${n}<small>${ex} · ${c}</small></td><td>${v}</td></tr>`).join("\n")}
+        </tbody>
+      </table></div>
+      <div class="txt" style="margin-top:18px">
+        <p>Contrairement à d'autres pays, ces métiers paient plutôt bien : selon le STATEC, la grande majorité des branches qui les recherchent dépasse largement le salaire horaire moyen. Voir <a href="/metiers-luxembourg">les salaires par profession</a>.</p>
+        <p>Pour l'employeur, la liste simplifie l'embauche de candidats hors Union européenne. Un frontalier citoyen de l'Union européenne n'a, lui, besoin d'aucune autorisation de travail.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="secteurs">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Secteurs</p>
+      <h2 style="margin-top:12px">Les secteurs qui cherchent ces profils</h2>
+      <p class="intro">Part de chaque branche dans les offres des métiers très en pénurie, de 2022 à 2025 (STATEC, d'après les données de l'ADEM).</p>
+    </div>
+    <div>
+      <table class="ptable ex num">
+        <thead><tr><th>Branche</th><th>Part des offres</th></tr></thead>
+        <tbody>
+${BRANCH.map(([n, v]) => `          <tr><td>${n}</td><td>${String(v.toFixed(1)).replace(".", ",")} %</td></tr>`).join("\n")}
+        </tbody>
+      </table>
+      <p class="note">Les activités comptables pèsent 3,7 % de l'emploi salarié mais 37 % de ces offres. Leurs principaux employeurs sont les « Big Four » : en 2025, PwC comptait 3 610 salariés au Luxembourg, Deloitte 2 580, EY 2 110 et KPMG 1 960. Voir aussi <a href="/entreprises-qui-recrutent-luxembourg">les entreprises qui recrutent le plus</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="postuler">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Frontaliers</p>
+      <h2 style="margin-top:12px">Où postuler quand on est frontalier</h2>
+    </div>
+    <div class="txt">
+      <ul>
+        <li><strong>ADEM</strong> : un non-résident peut s'y inscrire comme demandeur d'emploi, même sans y toucher d'indemnités. Fin septembre 2026, 1 917 non-résidents s'y étaient inscrits de leur propre initiative.</li>
+        <li><strong>govjobs.public.lu</strong> : les postes de l'État et des communes, qui ne passent pas par l'ADEM.</li>
+        <li><strong>Agences de placement et d'intérim</strong> : selon le STATEC, les entreprises qui cherchent des profils rares y font probablement aussi appel ; l'intérim a progressé dans l'informatique et reste élevé dans la santé.</li>
+      </ul>
+      <p>Avant de négocier, calculez le net d'une offre : <a href="/">simulateur brut → net</a>, <a href="/tableau-salaire-brut-net-luxembourg">tableau 2026</a>, et pour une voiture de fonction, <a href="/voiture-de-societe-luxembourg">l'avantage en nature</a>.</p>
+      ${LEAD}
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <div>
+${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>`).join("\n")}
+    </div>
+  </div>
+</section>
+
+<section class="prose">
+  <div class="wrap">
+    <div><p class="eyebrow">Sources</p></div>
+    <div class="txt"><p class="note"><a href="https://gouvernement.lu/dam-assets/images-documents/actualites/2026/10-octobre/20-reunion-tripartite/docs/20261020-runion-comit-de-suivi-tripartite-adem-vf.pdf" rel="noopener">ADEM, présentation du 20 octobre 2026</a> · <a href="https://adem.public.lu/dam-assets/fr/publications/adem/2026/cp-cc-2026-09/cp-cc-2026-09-fr.pdf" rel="noopener">ADEM, chiffres de septembre 2026</a> · <a href="https://adem.public.lu/dam-assets/fr/publications/adem/metiers-penurie.pdf" rel="noopener">ADEM, liste des métiers très en pénurie 2026</a> (Mémorial B n° 1490 du 27 mars 2026) · <a href="https://statistiques.public.lu/dam-assets/catalogue-publications/note-conjoncture/2026/ndc-1-26/ndc-1-26-7-2-etude.pdf" rel="noopener">STATEC, Note de conjoncture 1-2026, emploi et salaires dans les métiers en pénurie</a> · <a href="https://statistiques.public.lu/dam-assets/catalogue-publications/regards/2024/regards-09-24.pdf" rel="noopener">STATEC, salaires 2022</a></p></div>
+  </div>
+</section>
+` + FOOT;
+}
+
+/* STATEC, Les principaux employeurs au Luxembourg (situation au 1er janvier 2026, édition juillet 2026, et 1er janvier 2025).
+   Effectifs arrondis à la dizaine, déclarés par les entreprises ; chaque ligne a été relue dans les deux PDF. */
+const EMPLOYERS = [
+  ["Groupe Dussmann Luxembourg", "Nettoyage et services aux bâtiments", 5340], ["Groupe CFL", "Transport ferroviaire", 5320],
+  ["Amazon", "Siège européen et services", 4550], ["Groupe POST Luxembourg", "Poste et télécommunications", 4480],
+  ["Groupe Cactus", "Commerce de détail (supermarchés)", 4340], ["Groupe BNP Paribas au Luxembourg", "Banque", 3880],
+  ["Groupe ArcelorMittal", "Sidérurgie", 3570], ["Goodyear Dunlop Tires Operations", "Fabrication de pneumatiques", 3460],
+  ["Groupe PwC Luxembourg", "Audit et conseil", 3330], ["Groupe Cargolux", "Fret aérien", 3310],
+  ["Université du Luxembourg", "Enseignement supérieur et recherche", 3080], ["Groupe Crédit Agricole", "Banque", 3030],
+  ["Centre Hospitalier de Luxembourg", "Hôpital", 3020], ["Servior", "Maisons de soins et de retraite", 2590],
+  ["elisabeth", "Hébergement social et soins", 2580], ["Fondation Hôpitaux Robert Schuman", "Hôpitaux", 2520],
+  ["Compass Group Luxembourg", "Restauration collective", 2510], ["Voyages Emile Weber", "Transport en bus et voyages", 2460],
+  ["Groupe Deloitte Luxembourg", "Audit et conseil", 2450], ["Sodexo Luxembourg", "Restauration collective", 2440],
+  ["Centre Hospitalier Emile Mayrisch", "Hôpital", 2180], ["Groupe EY Luxembourg", "Audit et conseil", 2170],
+  ["Stëftung Hëllef Doheem", "Soins à domicile", 2130], ["Luxair", "Transport aérien de passagers", 2010],
+  ["Spuerkeess (BCEE)", "Banque", 1980],
+];
+const GAINERS = [
+  ["Groupe Dussmann Luxembourg", "Nettoyage et services aux bâtiments", 4880, 5340], ["State Street Bank International (succursale)", "Banque", 540, 930],
+  ["Arcus", "Aide à l'enfance et à la famille", 1510, 1750], ["elisabeth", "Hébergement social et soins", 2360, 2580],
+  ["Compass Group Luxembourg", "Restauration collective", 2290, 2510], ["Groupe CFL", "Transport ferroviaire", 5110, 5320],
+  ["Université du Luxembourg", "Enseignement supérieur et recherche", 2870, 3080], ["ISS Facility Services", "Nettoyage et services aux bâtiments", 540, 740],
+  ["Amazon", "Siège européen et services", 4370, 4550], ["Arhs Developments", "Informatique", 360, 540],
+  ["Voyages Emile Weber", "Transport en bus et voyages", 2310, 2460], ["Servior", "Maisons de soins et de retraite", 2460, 2590],
+  ["Luxair", "Transport aérien de passagers", 1880, 2010], ["A.B.S.C.", "Nettoyage", 670, 800],
+  ["Centre Hospitalier de Luxembourg", "Hôpital", 2900, 3020], ["Groupe Cargolux", "Fret aérien", 3200, 3310],
+];
+
+function companiesPage() {
+  const url = "/entreprises-qui-recrutent-luxembourg";
+  const title = "Entreprises qui recrutent le plus au Luxembourg en 2026 : les plus gros employeurs";
+  const desc = "Les entreprises qui embauchent le plus au Luxembourg : les 25 plus gros employeurs privés au 1er janvier 2026 et celles dont l'effectif a le plus augmenté en un an (STATEC). Nettoyage, soins, transport, banque, audit.";
+  const q = [
+    ["Quelle entreprise recrute le plus au Luxembourg ?", "Sur un an, c'est le groupe Dussmann (nettoyage et services aux bâtiments) dont l'effectif a le plus augmenté : 460 personnes de plus entre le 1er janvier 2025 et le 1er janvier 2026, à 5 340 salariés. Suivent State Street (+390), Arcus (+240), elisabeth et Compass Group (+220 chacun), les CFL et l'Université du Luxembourg (+210 chacun), d'après la liste des principaux employeurs du STATEC."],
+    ["Quel est le plus gros employeur du Luxembourg ?", "L'État et les communes, qui ne figurent pas dans la liste du STATEC. Parmi les entreprises, le groupe Dussmann (5 340 salariés au 1er janvier 2026) devance de peu les CFL (5 320), puis Amazon (4 550), le groupe POST (4 480) et le groupe Cactus (4 340)."],
+    ["Quelles banques emploient le plus au Luxembourg ?", "Au 1er janvier 2026 : le groupe BNP Paribas (3 880 salariés), le groupe Crédit Agricole (3 030) et la Spuerkeess (1 980). Parmi les banques présentes dans les deux éditions de la liste, State Street a le plus augmenté son effectif en 2025, de 540 à 930 salariés."],
+    ["Les Big Four recrutent-ils au Luxembourg ?", "Ils restent parmi les plus gros employeurs (PwC 3 330, Deloitte 2 450, EY 2 170, KPMG 1 770 au 1er janvier 2026), mais PwC, Deloitte et KPMG ont réduit leurs effectifs en 2025, alors que l'audit est le métier le plus en pénurie selon l'ADEM. EY a progressé de 60 personnes."],
+    ["Où trouver les offres d'emploi du secteur public au Luxembourg ?", "Sur govjobs.public.lu : l'État et les communes recrutent sur cette plateforme et ne déclarent pas leurs postes à l'ADEM."],
+  ];
+  const rows = (list) => list.map(([n, a, v], i) => `          <tr><td>${i + 1}. ${n}<small>${a}</small></td><td>${f0(v)}</td></tr>`).join("\n");
+  return head({ title, desc, url, jsonld: { "@context": "https://schema.org", "@graph": [article("Les entreprises qui recrutent le plus au Luxembourg en 2026", url), crumbs([["brutnet.lu", "/"], ["Entreprises qui recrutent", url]]), faq(q),
+    { "@type": "ItemList", name: "Entreprises dont l'effectif a le plus augmenté au Luxembourg entre 2025 et 2026", itemListElement: GAINERS.map(([n], i) => ({ "@type": "ListItem", position: i + 1, name: n })) }] } }) + `
+<section class="hero sm">
+  <div class="wrap">
+    <p class="eyebrow">Employeurs · Luxembourg · liste officielle du STATEC · mis à jour le 11 novembre 2026</p>
+    <h1 style="margin-top:18px">Les entreprises qui recrutent le plus <mark>au Luxembourg</mark>.</h1>
+    <p class="lede">Entre le 1<sup>er</sup> janvier 2025 et le 1<sup>er</sup> janvier 2026, le groupe <strong>Dussmann</strong> a gagné 460 salariés, la banque <strong>State Street</strong> 390, <strong>Arcus</strong> 240, <strong>elisabeth</strong> et <strong>Compass Group</strong> 220 chacun. Ceux qui embauchent le plus sont dans le nettoyage, les soins, le transport, la restauration collective et la banque.</p>
+  </div>
+</section>
+
+<section class="prose" id="hausses">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Embauches nettes</p>
+      <h2 style="margin-top:12px">Les entreprises dont l'effectif a le plus augmenté</h2>
+      <p class="intro">Effectif au 1<sup>er</sup> janvier 2025 et au 1<sup>er</sup> janvier 2026, entreprises présentes dans les deux éditions de la liste du STATEC. La hausse est nette : embauches moins départs.</p>
+    </div>
+    <div>
+      <div class="tscroll"><table class="ptable ex num">
+        <thead><tr><th>Entreprise</th><th>2025</th><th>2026</th><th>Hausse</th></tr></thead>
+        <tbody>
+${GAINERS.map(([n, a, x, y], i) => `          <tr><td>${i + 1}. ${n}<small>${a}</small></td><td>${f0(x)}</td><td>${f0(y)}</td><td>+ ${f0(y - x)}</td></tr>`).join("\n")}
+        </tbody>
+      </table></div>
+      <p class="note">Le périmètre d'un groupe peut changer d'une année à l'autre, ce qui peut jouer sur l'écart. Les entreprises absentes d'une des deux éditions, comme le groupe Crédit Agricole (3 030 salariés en 2026), ne peuvent pas être comparées.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="employeurs">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Classement 2026</p>
+      <h2 style="margin-top:12px">Les 25 plus gros employeurs du Luxembourg</h2>
+      <p class="intro">Entreprises et groupes classés par effectif au 1<sup>er</sup> janvier 2026, hors État, communes et écoles publiques. Ces grands employeurs recrutent régulièrement, ne serait-ce que pour remplacer les départs.</p>
+    </div>
+    <div>
+      <div class="tscroll"><table class="ptable ex num">
+        <thead><tr><th>Employeur</th><th>Salariés</th></tr></thead>
+        <tbody>
+${rows(EMPLOYERS)}
+        </tbody>
+      </table></div>
+      <p class="note">L'État et les communes, premier employeur du pays, recrutent sur govjobs.public.lu. La liste ne compte pas non plus les agences d'intérim.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="secteurs">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Secteurs</p>
+      <h2 style="margin-top:12px">Qui embauche, et pour quels métiers</h2>
+    </div>
+    <div class="txt">
+      <h3>Nettoyage et services aux bâtiments</h3>
+      <p>Dussmann (+460), ISS Facility Services (+200) et A.B.S.C. (+130) ont le plus grossi. Une part importante de leurs salariés travaille à temps partiel.</p>
+      <h3>Soins et action sociale</h3>
+      <p>elisabeth, Arcus, Servior, le Centre Hospitalier de Luxembourg, les Hôpitaux Robert Schuman : infirmiers, aides-soignants et éducateurs sont dans la <a href="/metiers-qui-recrutent-luxembourg#penurie">liste officielle des métiers en pénurie</a>.</p>
+      <h3>Transport</h3>
+      <p>Les CFL (+210), Voyages Emile Weber (+150), Luxair (+130) et Cargolux (+110) ont tous augmenté leurs effectifs en 2025.</p>
+      <h3>Banque, audit et informatique</h3>
+      <p>State Street est passée de 540 à 930 salariés et Arhs Developments, société informatique, de 360 à 540. À l'inverse, les Big Four ont réduit leurs effectifs, sauf EY (+60) : PwC −280, KPMG −190, Deloitte −130. Selon le STATEC, certains de ces cabinets ont ouvert des centres à l'étranger qui travaillent pour le Luxembourg, comme PwC au Portugal fin 2024. L'audit reste pourtant le métier où les offres en pénurie sont les plus nombreuses.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="postuler">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Frontaliers</p>
+      <h2 style="margin-top:12px">Avant d'accepter une offre</h2>
+    </div>
+    <div class="txt">
+      <p>Comparez le net, pas le brut : <a href="/">simulateur brut → net</a>, <a href="/tableau-salaire-brut-net-luxembourg">tableau 2026</a>, <a href="/metiers-luxembourg">salaires moyens par profession</a>. Une voiture de fonction se paie en <a href="/voiture-de-societe-luxembourg">avantage en nature</a>, et au-delà de 34 jours de <a href="/teletravail-frontalier-luxembourg">télétravail</a>, une partie du salaire devient imposable en France.</p>
+      ${LEAD}
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <div>
+${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>`).join("\n")}
+    </div>
+  </div>
+</section>
+
+<section class="prose">
+  <div class="wrap">
+    <div><p class="eyebrow">Sources et méthode</p></div>
+    <div class="txt"><p class="note"><a href="https://statistiques.public.lu/dam-assets/catalogue-publications/principaux-employeurs/2026/liste-des-pe-branche-2026.pdf" rel="noopener">STATEC, principaux employeurs au 1er janvier 2026</a> · <a href="https://statistiques.public.lu/dam-assets/catalogue-publications/principaux-employeurs/2025/liste-des-pe-branche-2025.pdf" rel="noopener">au 1er janvier 2025</a> · <a href="https://statistiques.public.lu/dam-assets/catalogue-publications/note-conjoncture/2026/ndc-1-26/ndc-1-26-7-2-etude.pdf" rel="noopener">STATEC, emploi et salaires dans les métiers en pénurie</a>. La liste repose sur une enquête facultative (taux de couverture de 66 %) auprès des entreprises d'au moins 90 personnes ; effectifs arrondis à la dizaine, temps partiel compris, intérimaires exclus.</p></div>
+  </div>
+</section>
+` + FOOT;
+}
+
 /* montants insécables : « 3 151,96 € » ne se coupe pas en fin de ligne */
 const nb = (html) => html.replace(/(\d) (?=\d{3}\b|€|%)/g, "$1\u00a0");
 
@@ -1441,6 +1728,30 @@ fs.writeFileSync(path.join(ROOT, "teletravail-frontalier-luxembourg.html"), nb(t
 fs.writeFileSync(path.join(ROOT, "voiture-de-societe-luxembourg.html"), nb(carPage()));
 fs.writeFileSync(path.join(ROOT, "credit-impot-luxembourg.html"), nb(creditPage()));
 fs.writeFileSync(path.join(ROOT, "metiers-luxembourg.html"), nb(jobsPage()));
+fs.writeFileSync(path.join(ROOT, "metiers-qui-recrutent-luxembourg.html"), nb(recruitPage()));
+fs.writeFileSync(path.join(ROOT, "entreprises-qui-recrutent-luxembourg.html"), nb(companiesPage()));
+
+/* accueil : section « Guides » générée depuis la liste du menu (maillage interne) */
+{
+  const p = path.join(ROOT, "index.html"), src = fs.readFileSync(p, "utf8");
+  const block = `<!-- guides -->
+<section class="prose" id="guides">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Guides</p>
+      <h2 style="margin-top:12px">Les guides du frontalier au Luxembourg</h2>
+      <p class="intro">Impôts, crédits d'impôt, télétravail, voiture de société, salaires par métier et entreprises qui recrutent : chiffres officiels 2026.</p>
+    </div>
+    <div class="guides">
+${GUIDE.map(([, items]) => items.map(([u, t, s]) => `      <a href="${u}"><b>${t}</b><span>${s}</span></a>`).join("\n")).join("\n")}
+    </div>
+  </div>
+</section>
+<!-- /guides -->`;
+  const out = src.replace(/<!-- guides -->[\s\S]*?<!-- \/guides -->/, () => block);
+  if (out === src && !src.includes('id="guides"')) throw new Error("bloc guides introuvable dans index.html");
+  fs.writeFileSync(p, out);
+}
 
 /* pages écrites à la main : on remplace seulement leur bloc <nav> par le menu commun */
 for (const [file, url] of [["index.html", "/"], ["impot-frontalier.html", "/impot-frontalier"], ["diagnostic.html", "/diagnostic"], ["mentions-legales.html", "/mentions-legales"]]) {
@@ -1450,7 +1761,7 @@ for (const [file, url] of [["index.html", "/"], ["impot-frontalier.html", "/impo
   fs.writeFileSync(p, out);
 }
 
-const core = ["/", "/tableau-salaire-brut-net-luxembourg", "/salaire-minimum-luxembourg", "/impot-frontalier", "/remboursement-impot-luxembourg", "/classe-impot-luxembourg", "/teletravail-frontalier-luxembourg", "/voiture-de-societe-luxembourg", "/credit-impot-luxembourg", "/metiers-luxembourg", "/diagnostic"];
+const core = ["/", "/tableau-salaire-brut-net-luxembourg", "/salaire-minimum-luxembourg", "/impot-frontalier", "/remboursement-impot-luxembourg", "/classe-impot-luxembourg", "/teletravail-frontalier-luxembourg", "/voiture-de-societe-luxembourg", "/credit-impot-luxembourg", "/metiers-luxembourg", "/metiers-qui-recrutent-luxembourg", "/entreprises-qui-recrutent-luxembourg", "/diagnostic"];
 const urls = [...core, ...AMOUNTS.map(slugOf)];
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
