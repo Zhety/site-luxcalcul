@@ -87,6 +87,7 @@ const GUIDE = [
     ["/tableau-salaire-brut-net-luxembourg", "Tableau brut → net 2026", "Le net de chaque salaire, classes 1, 1a et 2"],
     ["/salaire-minimum-luxembourg", "Salaire minimum 2026", "Le salaire social minimum, brut et net"],
     ["/voiture-de-societe-luxembourg", "Voiture de société et leasing", "Avantage en nature et calculateur"],
+    ["/metiers-luxembourg", "Métiers et salaires", "Les mieux payés, ceux qui recrutent"],
   ]],
 ];
 const NAV_JS = `(function(){var d=document.currentScript.parentNode.querySelector(".dd"),b=d.querySelector("button");function s(o){d.classList.toggle("open",o);b.setAttribute("aria-expanded",o)}b.addEventListener("click",function(){s(!d.classList.contains("open"))});document.addEventListener("click",function(e){if(!d.contains(e.target))s(false)});document.addEventListener("keydown",function(e){if(e.key==="Escape"&&d.classList.contains("open")){s(false);b.focus()}})})()`;
@@ -113,7 +114,7 @@ const FOOT = `
 <footer>
   <div class="wrap">
     <span>© 2026 brutnet.lu · Thionville</span>
-    <div class="links"><a href="/">Salaire brut net Luxembourg</a><a href="/tableau-salaire-brut-net-luxembourg">Tableau brut net 2026</a><a href="/salaire-minimum-luxembourg">Salaire minimum 2026</a><a href="/impot-frontalier">Déclaration d'impôts frontalier</a><a href="/remboursement-impot-luxembourg">Remboursement d'impôt</a><a href="/classe-impot-luxembourg">Classes d'impôt</a><a href="/credit-impot-luxembourg">Crédits d'impôt 2026</a><a href="/teletravail-frontalier-luxembourg">Télétravail 34 jours</a><a href="/voiture-de-societe-luxembourg">Voiture de société et leasing</a><a href="/diagnostic">Retraite et crédit frontalier</a><a href="/diagnostic#sources">Méthode et sources</a><a href="/mentions-legales">Mentions légales</a><a href="/mentions-legales#confidentialite">Confidentialité</a></div>
+    <div class="links"><a href="/">Salaire brut net Luxembourg</a><a href="/tableau-salaire-brut-net-luxembourg">Tableau brut net 2026</a><a href="/salaire-minimum-luxembourg">Salaire minimum 2026</a><a href="/impot-frontalier">Déclaration d'impôts frontalier</a><a href="/remboursement-impot-luxembourg">Remboursement d'impôt</a><a href="/classe-impot-luxembourg">Classes d'impôt</a><a href="/credit-impot-luxembourg">Crédits d'impôt 2026</a><a href="/teletravail-frontalier-luxembourg">Télétravail 34 jours</a><a href="/voiture-de-societe-luxembourg">Voiture de société et leasing</a><a href="/metiers-luxembourg">Métiers et salaires</a><a href="/diagnostic">Retraite et crédit frontalier</a><a href="/diagnostic#sources">Méthode et sources</a><a href="/mentions-legales">Mentions légales</a><a href="/mentions-legales#confidentialite">Confidentialité</a></div>
   </div>
 </footer>
 
@@ -1227,6 +1228,205 @@ ${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>
 ` + FOOT;
 }
 
+/* ------------------------------------------------------------------ métiers : salaires et recrutement */
+/* STATEC, Regards n° 09/2024 (enquête sur la structure des salaires 2022), salaire annuel brut moyen ETP */
+const ISCO = [
+  ["Directeurs, cadres de direction et gérants", "directeur général, financier, RH, commercial, de production", 158242],
+  ["Professions intellectuelles et scientifiques", "ingénieur, développeur, analyste financier, juriste, médecin, infirmier, enseignant", 97772],
+  ["Professions intermédiaires", "technicien, agent financier, assistant comptable, commercial technique", 77479],
+  ["Employés de type administratif", "secrétaire, employé de banque ou de bureau, agent de saisie", 62498],
+  ["Services aux particuliers, commerce et vente", "vendeur, cuisinier, serveur, aide-soignant, agent de sécurité", 49570],
+  ["Métiers qualifiés de l'industrie et de l'artisanat", "électricien, mécanicien, maçon, couvreur, carrossier", 48924],
+  ["Conducteurs de machines, ouvriers de l'assemblage", "chauffeur routier, conducteur de machines, opérateur", 46555],
+  ["Professions élémentaires", "manœuvre, nettoyeur, aide de cuisine, aide ménagère, éboueur", 40143],
+];
+/* même source, par secteur : [secteur, moyenne, médiane] */
+const NACE = [
+  ["Activités financières et d'assurance", 113018, 93843], ["Enseignement", 111362, 108929],
+  ["Activités spécialisées, scientifiques et techniques", 105145, 71118], ["Administration publique", 100458, 92707],
+  ["Information et communication", 79881, 72157], ["Santé et action sociale", 77695, 72918],
+  ["Autres services", 67831, 56807], ["Transport et entreposage", 66401, 50436], ["Industrie", 60226, 50784],
+  ["Commerce", 52468, 40519], ["Construction", 49587, 43178],
+  ["Services administratifs et de soutien, immobilier", 48679, 38934], ["Horeca", 40461, 34589],
+];
+/* ADEM, présentation du 20 octobre 2026 : offres janvier-septembre 2026 et offres sans candidat assigné */
+const HIRING = [
+  ["M1805", "Études et développement informatique", 480, 219], ["M1203", "Comptabilité", 404, 63],
+  ["K1202", "Éducation de jeunes enfants", 336, 205], ["J1506", "Soins infirmiers généralistes", 293, 150],
+  ["K1207", "Intervention socioéducative", 273, 121], ["M1802", "Expertise et support en systèmes d'information", 269, 118],
+  ["M1402", "Conseil en organisation et management d'entreprise", 240, 64],
+  ["H1206", "Ingénierie études, recherche et développement industriel", 188, 100], ["K1903", "Défense et conseil juridique", 185, 93],
+  ["J1501", "Soins d'hygiène et de confort du patient (aide-soignant)", 149, 94], ["K1302", "Assistance auprès d'adultes", 141, 61],
+];
+/* ADEM, liste des métiers très en pénurie 2026 (Mémorial B n° 1490 du 27 mars 2026) ; postes vacants : STATEC, moyenne par mois en 2025 */
+const SHORT = [
+  ["M1202", "Audit et contrôle comptables et financiers", "auditeur interne, expert-comptable, réviseur", 260],
+  ["M1805", "Études et développement informatique", "développeur, analyste-programmeur, testeur, BI", 223],
+  ["K1903", "Défense et conseil juridique", "juriste, fiscaliste, avocat", 182],
+  ["C1202", "Analyse de crédits et risques bancaires", "analyste crédit, analyste KYC", 164],
+  ["M1802", "Expertise et support en systèmes d'information", "architecte cloud, sécurité informatique", 154],
+  ["M1201", "Analyse et ingénierie financière", "analyste financier, risk manager", 124],
+  ["C1301", "Front office marchés financiers", "gestionnaire d'OPCVM, négociateur", 106],
+  ["J1506", "Soins infirmiers généralistes", "infirmier hospitalier, à domicile, en gériatrie", 86],
+  ["K1202", "Éducation de jeunes enfants", "éducateur de jeunes enfants", 83],
+  ["H1206", "Ingénierie études, recherche et développement industriel", "ingénieur R&D, chef de projet industriel", 82],
+  ["K1207", "Intervention socioéducative", "éducateur spécialisé", 76],
+  ["J1501", "Soins d'hygiène et de confort du patient", "aide-soignant", 69],
+  ["C1206", "Gestion de clientèle bancaire", "chargé de clientèle bancaire", 61],
+  ["M1801", "Administration de systèmes d'information", "administrateur système, réseau, bases de données", 43],
+  ["I1304", "Installation et maintenance d'équipements industriels", "électromécanicien, technicien de maintenance", 39],
+  ["F1610", "Pose et restauration de couvertures", "couvreur, zingueur, monteur photovoltaïque", 37],
+  ["H1502", "Management et ingénierie qualité industrielle", "responsable qualité, QSE", 24],
+  ["I1310", "Maintenance mécanique industrielle", "mécanicien d'entretien industriel", 24],
+  ["I1606", "Réparation de carrosserie", "carrossier, peintre en carrosserie", 20],
+  ["K1201", "Action sociale", "assistant social", 13],
+];
+
+function jobsPage() {
+  const url = "/metiers-luxembourg";
+  const top = ISCO[0], low = ISCO[ISCO.length - 1];
+  const title = "Métiers les mieux payés et qui recrutent au Luxembourg en 2026";
+  const desc = `Salaire moyen par métier et par secteur au Luxembourg (STATEC), métiers qui recrutent le plus en 2026 et liste officielle des 20 métiers en pénurie (ADEM). Avec le net en 2026 pour un frontalier.`;
+  const q = [
+    ["Quel est le métier le mieux payé au Luxembourg ?", `Les directeurs, cadres de direction et gérants : ${f0(top[2])} € brut par an en moyenne en équivalent temps plein, primes comprises, selon l'enquête du STATEC sur 2022. Viennent ensuite les professions intellectuelles et scientifiques (ingénieurs, informaticiens, juristes, médecins...) avec ${f0(ISCO[1][2])} €. Par secteur, la finance paie le plus en moyenne (113 018 €), l'enseignement le plus en médiane (108 929 €).`],
+    ["Quels métiers recrutent le plus au Luxembourg en 2026 ?", "D'après l'ADEM, de janvier à septembre 2026 : le développement informatique (480 offres), la comptabilité (404), l'éducation de jeunes enfants (336), les soins infirmiers (293), l'intervention socioéducative (273) et l'expertise en systèmes d'information (269). Le secteur public, premier employeur du pays, recrute à part sur govjobs.public.lu."],
+    ["Quels sont les métiers en pénurie au Luxembourg en 2026 ?", "La liste officielle de l'ADEM compte 20 métiers : audit et expertise comptable, développement et systèmes informatiques, juristes et fiscalistes, banque (crédit, KYC, clientèle, marchés), analyse financière, infirmiers et aides-soignants, éducateurs, assistants sociaux, ingénieurs R&D et qualité, maintenance industrielle, couvreurs et carrossiers."],
+    ["Quel est le salaire moyen au Luxembourg ?", "75 919 € brut par an pour un temps plein en 2022, primes, heures supplémentaires et 13ᵉ mois compris, selon le STATEC. Le salaire médian est de 58 126 € : la moitié des salariés gagne moins. Les salaires ont depuis été relevés par l'indexation."],
+    ["Un frontalier gagne-t-il moins qu'un résident au Luxembourg ?", "En moyenne oui : 65 487 € brut par an pour un frontalier en 2022, contre 92 093 € pour un résident de nationalité luxembourgeoise et 78 747 € pour un résident étranger (STATEC). À poste et salaire égaux, les cotisations sont les mêmes ; seule la classe d'impôt peut changer le net."],
+  ];
+  const netCell = (yr) => { const g = Math.round(yr / 12 * 100) / 100; return cell(g, 1, 0, D.payslip(g, 1, 0, {}).net); };
+  return head({ title, desc, url, jsonld: { "@context": "https://schema.org", "@graph": [article("Métiers les mieux payés et métiers qui recrutent au Luxembourg", url), crumbs([["brutnet.lu", "/"], ["Métiers et salaires", url]]), faq(q)] } }) + `
+<section class="hero sm">
+  <div class="wrap">
+    <p class="eyebrow">Métiers · salaires · recrutement · Luxembourg · mis à jour le 11 novembre 2026</p>
+    <h1 style="margin-top:18px">Les métiers qui paient le plus au Luxembourg, <mark>et ceux qui recrutent</mark>.</h1>
+    <p class="lede">Un directeur gagne en moyenne <strong>${f0(top[2])} € brut par an</strong>, près de quatre fois plus qu'un salarié d'une profession élémentaire (${f0(low[2])} €). Et au Luxembourg, les métiers qui manquent de candidats sont plutôt en haut de l'échelle : finance, audit, informatique, droit, mais aussi soins et éducation.</p>
+  </div>
+</section>
+
+<section class="prose" id="professions">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Salaires par profession</p>
+      <h2 style="margin-top:12px">Les professions les mieux payées</h2>
+      <p class="intro">Salaire annuel brut moyen d'un temps plein, primes, heures supplémentaires et 13ᵉ mois compris. Enquête du STATEC sur l'année 2022, la plus récente ; les salaires ont depuis été indexés. Le net est celui que donnerait en 2026 un brut mensuel égal au douzième, en classe 1.</p>
+    </div>
+    <div>
+      <div class="tscroll"><table class="ptable ex num">
+        <thead><tr><th>Profession</th><th>Brut / an</th><th>Brut / mois</th><th>Net classe 1</th></tr></thead>
+        <tbody>
+${ISCO.map(([n, ex, yr]) => `          <tr><td>${n}<small>${ex}</small></td><td>${f0(yr)} €</td><td>${f2(Math.round(yr / 12 * 100) / 100)} €</td>${netCell(yr)}</tr>`).join("\n")}
+          <tr class="total"><td>Ensemble des salariés<small>médiane : 58 126 € brut par an</small></td><td>75 919 €</td><td>${f2(Math.round(75919 / 12 * 100) / 100)} €</td>${netCell(75919)}</tr>
+        </tbody>
+      </table></div>
+      <p class="note">Brut mensuel = brut annuel ÷ 12 : il inclut donc les primes et le 13ᵉ mois répartis sur l'année. Net 2026 en classe 1 (célibataire, ou frontalier marié sans taux global), sans frais de déplacement. Pour votre propre salaire : <a href="/">le simulateur brut → net</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="secteurs">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Salaires par secteur</p>
+      <h2 style="margin-top:12px">La finance en tête, l'horeca en bas</h2>
+      <p class="intro">Moyenne et médiane du salaire annuel brut d'un temps plein en 2022. La médiane, que la moitié des salariés n'atteint pas, est moins tirée vers le haut par les très hauts salaires.</p>
+    </div>
+    <div>
+      <table class="ptable ex num">
+        <thead><tr><th>Secteur</th><th>Moyenne / an</th><th>Médiane / an</th></tr></thead>
+        <tbody>
+${NACE.map(([n, m, md]) => `          <tr><td>${n}</td><td>${f0(m)} €</td><td>${f0(md)} €</td></tr>`).join("\n")}
+          <tr class="total"><td>Ensemble de l'économie</td><td>75 919 €</td><td>58 126 €</td></tr>
+        </tbody>
+      </table>
+      <p class="note">En finance, 81 % des salariés ont un diplôme universitaire, contre 11 % dans l'horeca : une grande partie de l'écart vient des profils. Les grandes entreprises paient aussi davantage, même à type de profession égal : 92 286 € en moyenne au-delà de 1 000 salariés, 66 120 € entre 10 et 49.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="recrutent">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Recrutement 2026</p>
+      <h2 style="margin-top:12px">Les métiers qui recrutent le plus</h2>
+      <p class="intro">Offres d'emploi de l'ADEM sur janvier-septembre 2026 et, parmi les offres non publiées, celles pour lesquelles l'ADEM n'a envoyé aucun candidat à l'employeur.</p>
+    </div>
+    <div>
+      <div class="tscroll"><table class="ptable ex num">
+        <thead><tr><th>Métier</th><th>Offres</th><th>Sans candidat</th></tr></thead>
+        <tbody>
+${HIRING.map(([c, n, o, s]) => `          <tr><td>${n}<small>${c}</small></td><td>${o}</td><td>${s}</td></tr>`).join("\n")}
+        </tbody>
+      </table></div>
+      <div class="txt" style="margin-top:18px">
+        <p>En septembre 2026, les employeurs ont déclaré <strong>3 300 postes</strong> à l'ADEM et <strong>6 632 offres</strong> étaient ouvertes en fin de mois. Sur un an, les offres progressent le plus dans les soins paramédicaux, l'action sociale et socio-éducative, l'informatique, les métiers de bouche et l'aide à la vie quotidienne.</p>
+        <p>D'autres métiers ont beaucoup d'offres sans être en pénurie, parce que les candidats sont nombreux : cuisine, secrétariat, service en restauration. Le secteur public ne passe pas par l'ADEM : l'État et les communes publient leurs postes sur govjobs.public.lu.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="penurie">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Pénurie</p>
+      <h2 style="margin-top:12px">Les 20 métiers très en pénurie en 2026</h2>
+      <p class="intro">Liste officielle de l'ADEM, établie sur l'année 2025 : au moins 7 offres par mois en moyenne, trop peu de demandeurs d'emploi et une part élevée d'offres sans candidat. Elle était de 29 métiers en 2023, 24 en 2024 et 22 en 2025.</p>
+    </div>
+    <div>
+      <div class="tscroll"><table class="ptable ex num">
+        <thead><tr><th>Métier</th><th>Postes vacants / mois en 2025</th></tr></thead>
+        <tbody>
+${SHORT.map(([c, n, ex, v]) => `          <tr><td>${n}<small>${ex} · ${c}</small></td><td>${v}</td></tr>`).join("\n")}
+        </tbody>
+      </table></div>
+      <div class="txt" style="margin-top:18px">
+        <p>Contrairement à d'autres pays, ces métiers en pénurie paient plutôt bien : selon le STATEC, la grande majorité des branches qui les recherchent dépasse largement le salaire horaire moyen. Les plus tendus en 2025 : les soins paramédicaux, avec <strong>un demandeur d'emploi pour deux offres</strong>, puis la mécanique et le travail des métaux.</p>
+        <p>Pour l'employeur, la liste simplifie l'embauche de candidats hors Union européenne. Un frontalier citoyen de l'Union européenne n'a, lui, besoin d'aucune autorisation de travail.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="frontaliers">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Frontaliers</p>
+      <h2 style="margin-top:12px">Frontalier ou résident : les salaires moyens</h2>
+      <p class="intro">Salaire annuel brut moyen d'un temps plein en 2022, selon la résidence.</p>
+    </div>
+    <div>
+      <table class="ptable ex num">
+        <tbody>
+          <tr><td>Frontaliers</td><td>65 487 €</td></tr>
+          <tr><td>Résidents de nationalité étrangère</td><td>78 747 €</td></tr>
+          <tr><td>Résidents de nationalité luxembourgeoise</td><td>92 093 €</td></tr>
+        </tbody>
+      </table>
+      <p class="note">À salaire égal, un frontalier paie les mêmes cotisations qu'un résident ; seule la <a href="/classe-impot-luxembourg">classe d'impôt</a> peut changer le net. Pour un salaire précis, voir le <a href="/tableau-salaire-brut-net-luxembourg">tableau brut → net 2026</a>.</p>
+      ${LEAD}
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <div>
+${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>`).join("\n")}
+    </div>
+  </div>
+</section>
+
+<section class="prose">
+  <div class="wrap">
+    <div><p class="eyebrow">Sources</p></div>
+    <div class="txt"><p class="note"><a href="https://statistiques.public.lu/dam-assets/catalogue-publications/regards/2024/regards-09-24.pdf" rel="noopener">STATEC, Regards n° 09/2024, salaires 2022</a> · <a href="https://statistiques.public.lu/dam-assets/catalogue-publications/note-conjoncture/2026/ndc-1-26/ndc-1-26-7-2-etude.pdf" rel="noopener">STATEC, Note de conjoncture 1-2026, emploi et salaires dans les métiers en pénurie</a> · <a href="https://adem.public.lu/dam-assets/fr/publications/adem/metiers-penurie.pdf" rel="noopener">ADEM, liste des métiers très en pénurie 2026</a> (Mémorial B n° 1490 du 27 mars 2026) · <a href="https://adem.public.lu/dam-assets/fr/publications/adem/2026/cp-cc-2026-09/cp-cc-2026-09-fr.pdf" rel="noopener">ADEM, chiffres de septembre 2026</a> · <a href="https://gouvernement.lu/dam-assets/images-documents/actualites/2026/10-octobre/20-reunion-tripartite/docs/20261020-runion-comit-de-suivi-tripartite-adem-vf.pdf" rel="noopener">ADEM, présentation du 20 octobre 2026</a></p></div>
+  </div>
+</section>
+` + FOOT;
+}
+
 /* montants insécables : « 3 151,96 € » ne se coupe pas en fin de ligne */
 const nb = (html) => html.replace(/(\d) (?=\d{3}\b|€|%)/g, "$1\u00a0");
 
@@ -1240,6 +1440,7 @@ fs.writeFileSync(path.join(ROOT, "classe-impot-luxembourg.html"), nb(classPage()
 fs.writeFileSync(path.join(ROOT, "teletravail-frontalier-luxembourg.html"), nb(teleworkPage()));
 fs.writeFileSync(path.join(ROOT, "voiture-de-societe-luxembourg.html"), nb(carPage()));
 fs.writeFileSync(path.join(ROOT, "credit-impot-luxembourg.html"), nb(creditPage()));
+fs.writeFileSync(path.join(ROOT, "metiers-luxembourg.html"), nb(jobsPage()));
 
 /* pages écrites à la main : on remplace seulement leur bloc <nav> par le menu commun */
 for (const [file, url] of [["index.html", "/"], ["impot-frontalier.html", "/impot-frontalier"], ["diagnostic.html", "/diagnostic"], ["mentions-legales.html", "/mentions-legales"]]) {
@@ -1249,7 +1450,7 @@ for (const [file, url] of [["index.html", "/"], ["impot-frontalier.html", "/impo
   fs.writeFileSync(p, out);
 }
 
-const core = ["/", "/tableau-salaire-brut-net-luxembourg", "/salaire-minimum-luxembourg", "/impot-frontalier", "/remboursement-impot-luxembourg", "/classe-impot-luxembourg", "/teletravail-frontalier-luxembourg", "/voiture-de-societe-luxembourg", "/credit-impot-luxembourg", "/diagnostic"];
+const core = ["/", "/tableau-salaire-brut-net-luxembourg", "/salaire-minimum-luxembourg", "/impot-frontalier", "/remboursement-impot-luxembourg", "/classe-impot-luxembourg", "/teletravail-frontalier-luxembourg", "/voiture-de-societe-luxembourg", "/credit-impot-luxembourg", "/metiers-luxembourg", "/diagnostic"];
 const urls = [...core, ...AMOUNTS.map(slugOf)];
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
