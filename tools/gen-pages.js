@@ -1253,12 +1253,17 @@ const NACE = [
 ];
 /* ADEM, présentation du 20 octobre 2026 : offres janvier-septembre 2026 et offres sans candidat assigné */
 const HIRING = [
-  ["M1805", "Études et développement informatique", 480, 219], ["M1203", "Comptabilité", 404, 63],
-  ["K1202", "Éducation de jeunes enfants", 336, 205], ["J1506", "Soins infirmiers généralistes", 293, 150],
-  ["K1207", "Intervention socioéducative", 273, 121], ["M1802", "Expertise et support en systèmes d'information", 269, 118],
-  ["M1402", "Conseil en organisation et management d'entreprise", 240, 64],
-  ["H1206", "Ingénierie études, recherche et développement industriel", 188, 100], ["K1903", "Défense et conseil juridique", 185, 93],
-  ["J1501", "Soins d'hygiène et de confort du patient (aide-soignant)", 149, 94], ["K1302", "Assistance auprès d'adultes", 141, 61],
+  ["M1805", "Études et développement informatique", 480, 219, "développeur, analyste-programmeur, testeur, BI"],
+  ["M1203", "Comptabilité", 404, 63, "comptable, aide-comptable"],
+  ["K1202", "Éducation de jeunes enfants", 336, 205, "éducateur de jeunes enfants, responsable de crèche"],
+  ["J1506", "Soins infirmiers généralistes", 293, 150, "infirmier hospitalier, à domicile, en gériatrie"],
+  ["K1207", "Intervention socioéducative", 273, 121, "éducateur spécialisé"],
+  ["M1802", "Expertise et support en systèmes d'information", 269, 118, "architecte cloud, sécurité informatique"],
+  ["M1402", "Conseil en organisation et management d'entreprise", 240, 64, "consultant en organisation, en management"],
+  ["H1206", "Ingénierie études, recherche et développement industriel", 188, 100, "ingénieur R&D, chef de projet industriel"],
+  ["K1903", "Défense et conseil juridique", 185, 93, "juriste, fiscaliste, avocat"],
+  ["J1501", "Soins d'hygiène et de confort du patient", 149, 94, "aide-soignant"],
+  ["K1302", "Assistance auprès d'adultes", 141, 61, "auxiliaire de vie, aide à domicile"],
 ];
 /* ADEM, liste des métiers très en pénurie 2026 (Mémorial B n° 1490 du 27 mars 2026) ; postes vacants : STATEC, moyenne par mois en 2025 */
 const SHORT = [
@@ -1450,10 +1455,10 @@ function recruitPage() {
       <div class="tscroll"><table class="ptable ex num">
         <thead><tr><th>Métier</th><th>Offres</th><th>Sans candidat</th></tr></thead>
         <tbody>
-${HIRING.map(([c, n, o, s], i) => `          <tr><td>${i + 1}. ${n}<small>code ROME ${c}</small></td><td>${o}</td><td>${s}</td></tr>`).join("\n")}
+${HIRING.map(([c, n, o, s, ex], i) => `          <tr><td>${i + 1}. ${n}<small>${ex}</small></td><td>${o}</td><td>${s}</td></tr>`).join("\n")}
         </tbody>
       </table></div>
-      <p class="note">En septembre 2026, l'informatique (262 postes) et la comptabilité-gestion (254) restaient les deux familles où les employeurs déclaraient le plus de postes. D'autres métiers ont beaucoup d'offres sans être en pénurie, car les candidats y sont nombreux : cuisine, secrétariat, service en restauration.</p>
+      <p class="note">Intitulés de l'ADEM, qui classe les métiers selon le répertoire ROME, le même que France Travail. En septembre 2026, l'informatique (262 postes) et la comptabilité-gestion (254) restaient les deux familles où les employeurs déclaraient le plus de postes. D'autres métiers ont beaucoup d'offres sans être en pénurie, car les candidats y sont nombreux : cuisine, secrétariat, service en restauration.</p>
     </div>
   </div>
 </section>
@@ -1491,7 +1496,7 @@ ${HIRING.map(([c, n, o, s], i) => `          <tr><td>${i + 1}. ${n}<small>code R
       <table class="ptable ex num">
         <thead><tr><th>Famille de métiers</th><th>Demandeurs par offre</th></tr></thead>
         <tbody>
-${RATIO.map(([c, n, r]) => `          <tr><td>${n}<small>${c}</small></td><td>${String(r).replace(".", ",")}</td></tr>`).join("\n")}
+${RATIO.map(([c, n, r]) => `          <tr><td>${n}</td><td>${String(r).replace(".", ",")}</td></tr>`).join("\n")}
         </tbody>
       </table>
       <p class="note">Familles qui contiennent au moins un métier en pénurie. La conduite de transport, la maintenance informatique et la conduite d'engins logistiques ont des ratios encore plus bas, mais trop peu d'offres pour être classées en pénurie.</p>
@@ -1510,7 +1515,7 @@ ${RATIO.map(([c, n, r]) => `          <tr><td>${n}<small>${c}</small></td><td>${
       <div class="tscroll"><table class="ptable ex num">
         <thead><tr><th>Métier</th><th>Postes vacants / mois en 2025</th></tr></thead>
         <tbody>
-${SHORT.map(([c, n, ex, v]) => `          <tr><td>${n}<small>${ex} · ${c}</small></td><td>${v}</td></tr>`).join("\n")}
+${SHORT.map(([c, n, ex, v]) => `          <tr><td>${n}<small>${ex}</small></td><td>${v}</td></tr>`).join("\n")}
         </tbody>
       </table></div>
       <div class="txt" style="margin-top:18px">
