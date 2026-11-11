@@ -49,11 +49,15 @@
       /* ACD : CIS et CI-CO2 salarié, année d'imposition 2026 (sur salaire brut annuel) */
       cis: { min: 936, a: 300, slopeLow: 0.029, flat: 600, flatTo: 40000, slopeHigh: 0.015, zero: 80000 },
       cico2: { flat: 216, flatTo: 40000, slope: 0.0054, zero: 80000 },
-      /* CISSM : 81 €/mois (projet de loi 8775, « montant actuel »), 1 800–3 000 € plein, dégressif jusqu'à 3 600 € ;
-         vérifié par l'exemple ACD : 3 500 € brut → 13,50 € */
+      /* CISSM (art. 139quater LIR) : 81 €/mois de 1 800 à 3 000 € brut, 81/600 × (3 600 − brut) jusqu'à 3 600 €,
+         arrondi au cent supérieur ; vérifié par l'exemple ACD : 3 500 € brut → 13,50 €.
+         Loi 8775 (votée le 28.10.2026) : 179 € de janvier à juin 2027, 200 € à partir de juillet 2027. */
       cissm: { amount: 81, fullFrom: 1800, fullTo: 3000, zero: 3600 },
-      /* Crédit d'impôt conjoncture, 1er juin – 31 déc. 2026 : barème indicatif Securex (interpolation linéaire) */
-      cic: [[1125, 0], [1250, 2], [2100, 3.5], [4600, 22], [9500, 22], [9925, 24], [14175, 24], [14916, 27.13]],
+      /* CIC salarié 2026 (art. 154sexdecies LIR, projet de loi 8775 voté le 28.10.2026) : du 1er juin au
+         31 décembre 2026, moitié du barème CIC 2023 sur le brut mensuel, arrondi au cent supérieur
+         (formules dans cicMonthly). Même barème pour le CIC pensionné (art. 154septdecies). */
+      cic: { min: 1125, top: 14916, max: 27.13 },
+      cicFrom: "2026-06-01",
       cicUntil: "2026-12-31",
       /* Crédit d'impôt monoparental (classe 1a), à partir de 2025 */
       cim: { full: 3504, from: 60000, slope: 0.0612, to: 105000, min: 750 },
@@ -188,17 +192,39 @@
     if (g <= c.flatTo) return c.flat;
     return c.flat - (g - c.flatTo) * c.slope;
   }
+  /* arrondi au cent supérieur (CISSM, CIC) ; la marge absorbe les erreurs binaires (22 → 22,00, pas 22,01) */
+  function ceil2(x) { return Math.ceil(x * 100 - 1e-6) / 100; }
   function cissmMonthly(gm) {
     var c = P.lu.cissm;
     if (gm < c.fullFrom || gm >= c.zero) return 0;
     if (gm <= c.fullTo) return c.amount;
-    return c.amount * (c.zero - gm) / (c.zero - c.fullTo);
+    return ceil2(c.amount / (c.zero - c.fullTo) * (c.zero - gm));
   }
+  /* CIC salarié / pensionné 2026 : art. 154sexdecies et 154septdecies LIR, texte voté le 28.10.2026 */
   function cicMonthly(gm, date) {
-    var d = date || P.asOf;
-    if (d < "2026-06-01" || d > P.lu.cicUntil) return 0;
-    if (gm < P.lu.cic[0][0]) return 0;
-    return interp(P.lu.cic, gm);
+    var d = date || P.asOf, c = P.lu.cic, v;
+    if (d < P.lu.cicFrom || d > P.lu.cicUntil || gm < c.min) return 0;
+    if (gm > c.top) return c.max;
+    if (gm <= 1250) v = (gm - 1125) * 4 / 125;
+    else if (gm <= 2100) v = (gm - 1250) * 3 / 850 + 4;
+    else if (gm <= 4600) v = (gm - 2100) * 37 / 2500 + 7;
+    else if (gm <= 9500) v = 44;
+    else if (gm <= 9925) v = (gm - 9500) * 4 / 425 + 44;
+    else if (gm <= 14175) v = 48;
+    else v = (gm - 14175) * 3 / 356 + 48;
+    return ceil2(v / 2);
+  }
+  /* CIP et CI-CO2 pensionné, à partir de l'année d'imposition 2026 (ACD), sur la pension brute annuelle */
+  function cipAnnual(p) {
+    if (p < 300 || p >= P.lu.cis.zero) return 0;
+    if (p < P.lu.cis.min) return P.lu.cis.a;
+    return cisAnnual(p);
+  }
+  function cico2PensionAnnual(p) {
+    var c = P.lu.cico2;
+    if (p < 300 || p >= c.zero) return 0;
+    if (p <= c.flatTo) return c.flat;
+    return c.flat - (p - c.flatTo) * c.slope;
   }
   function cimAnnual(R) {
     var c = P.lu.cim;
@@ -413,7 +439,8 @@
     if (couple) { clsNow = resident ? 2 : 1; clsOpt = 2; }
     else if (kids > 0) { clsNow = "1a"; clsOpt = "1a"; }
     else { clsNow = 1; clsOpt = 1; }
-    var cimNow = !couple && kids > 0;
+    /* CIM : sur la fiche d'un résident seulement ; un non-résident assimilé ne l'obtient que par la déclaration (ACD) */
+    var cimDecl = !couple && kids > 0, cimNow = cimDecl && resident;
 
     /* ---- 2. Fiche de paie actuelle ---- */
     var slip = payslip(gm, clsNow, km, { cim: cimNow });
@@ -448,7 +475,7 @@
       mortgage = mortgageCap === null ? +S.mortgageInterest : Math.min(+S.mortgageInterest, mortgageCap);
     }
     function declare(extraSpecial, withMortgage) {
-      var a = { grossMonthly: gm, bonus: bonus, km: km, cls: clsOpt, cim: cimNow,
+      var a = { grossMonthly: gm, bonus: bonus, km: km, cls: clsOpt, cim: cimDecl,
                 specialExpenses: insurance + extraSpecial, mortgageInterest: withMortgage ? mortgage : 0, aep: aep };
       if (spouseFR) a.other = spouseIncome;                /* taux global sur le revenu mondial du ménage */
       if (spouseLU) {
@@ -502,7 +529,7 @@
 
   return {
     P: P, T1: T1, T1a: T1a, T2: T2, taxFull: taxFull, cisAnnual: cisAnnual, cico2Annual: cico2Annual,
-    cissmMonthly: cissmMonthly, cicMonthly: cicMonthly, cimAnnual: cimAnnual, fdAnnual: fdAnnual, contribs: contribs,
+    cissmMonthly: cissmMonthly, cicMonthly: cicMonthly, cipAnnual: cipAnnual, cico2PensionAnnual: cico2PensionAnnual, cimAnnual: cimAnnual, fdAnnual: fdAnnual, contribs: contribs,
     payslip: payslip, bonusTax: bonusTax, tauxGlobal: tauxGlobal, employerCost: employerCost, assessment: assessment, luPension: luPension, frPension: frPension,
     capacity: capacity, diagnostic: diagnostic
   };

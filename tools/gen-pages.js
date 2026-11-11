@@ -8,7 +8,7 @@ const fs = require("fs"), path = require("path");
 const D = require("../calc.js");
 const ROOT = path.join(__dirname, "..");
 const SITE = "https://brutnet.lu";
-const TODAY = "2026-11-09";
+const TODAY = "2026-11-11";
 const SSM = D.P.lu.ssm, SSMQ = Math.round(SSM * 1.2 * 100) / 100;
 
 const AMOUNTS = [];
@@ -80,6 +80,7 @@ const GUIDE = [
     ["/impot-frontalier", "Déclarer ses impôts", "Cases 1AF et 8TK, décompte au Luxembourg"],
     ["/remboursement-impot-luxembourg", "Remboursement d'impôt", "Récupérer l'impôt payé en trop"],
     ["/classe-impot-luxembourg", "Classe d'impôt", "1, 1a ou 2 : les règles officielles"],
+    ["/credit-impot-luxembourg", "Crédits d'impôt 2026", "CIS, CISSM, conjoncture, monoparental"],
     ["/teletravail-frontalier-luxembourg", "Télétravail : 34 jours", "Compteur de jours et seuil de 25 %"],
   ]],
   ["Salaire", [
@@ -112,7 +113,7 @@ const FOOT = `
 <footer>
   <div class="wrap">
     <span>© 2026 brutnet.lu · Thionville</span>
-    <div class="links"><a href="/">Salaire brut net Luxembourg</a><a href="/tableau-salaire-brut-net-luxembourg">Tableau brut net 2026</a><a href="/salaire-minimum-luxembourg">Salaire minimum 2026</a><a href="/impot-frontalier">Déclaration d'impôts frontalier</a><a href="/remboursement-impot-luxembourg">Remboursement d'impôt</a><a href="/classe-impot-luxembourg">Classes d'impôt</a><a href="/teletravail-frontalier-luxembourg">Télétravail 34 jours</a><a href="/voiture-de-societe-luxembourg">Voiture de société et leasing</a><a href="/diagnostic">Retraite et crédit frontalier</a><a href="/diagnostic#sources">Méthode et sources</a><a href="/mentions-legales">Mentions légales</a><a href="/mentions-legales#confidentialite">Confidentialité</a></div>
+    <div class="links"><a href="/">Salaire brut net Luxembourg</a><a href="/tableau-salaire-brut-net-luxembourg">Tableau brut net 2026</a><a href="/salaire-minimum-luxembourg">Salaire minimum 2026</a><a href="/impot-frontalier">Déclaration d'impôts frontalier</a><a href="/remboursement-impot-luxembourg">Remboursement d'impôt</a><a href="/classe-impot-luxembourg">Classes d'impôt</a><a href="/credit-impot-luxembourg">Crédits d'impôt 2026</a><a href="/teletravail-frontalier-luxembourg">Télétravail 34 jours</a><a href="/voiture-de-societe-luxembourg">Voiture de société et leasing</a><a href="/diagnostic">Retraite et crédit frontalier</a><a href="/diagnostic#sources">Méthode et sources</a><a href="/mentions-legales">Mentions légales</a><a href="/mentions-legales#confidentialite">Confidentialité</a></div>
   </div>
 </footer>
 
@@ -170,7 +171,7 @@ function salaryPage(g, i) {
           <tr><td>Classe 1a · parent isolé</td>${cell(g, "1a", 0, r.c1a.net)}<td>${f0(r.c1a.net * 12)} €</td><td>${f0(yr(r.c1a, r.b1a))} €</td></tr>
         </tbody>
       </table>
-      <p class="note">Classe 1a avec le crédit d'impôt monoparental. Le 13ᵉ mois de ${G} € est imposé à part : il rapporte ${f2(r.b1.net)} € net en classe 1 et ${f2(r.b2.net)} € en classe 2.</p>
+      <p class="note">Classe 1a avec le <a href="/credit-impot-luxembourg#cim">crédit d'impôt monoparental</a> (${f2(r.c1a.cim)} € par mois), versé sur la fiche d'un résident ; un frontalier assimilé le récupère par sa déclaration. Le 13ᵉ mois de ${G} € est imposé à part : il rapporte ${f2(r.b1.net)} € net en classe 1 et ${f2(r.b2.net)} € en classe 2.</p>
     </div>
   </div>
 </section>
@@ -195,6 +196,7 @@ ${credits.map(([k, v]) => `          <tr><td>${k}</td><td>+ ${f2(v)} €</td></t
           <tr><td><strong>Net versé</strong></td><td><strong>${f2(s.net)} €</strong></td></tr>
         </tbody>
       </table>
+      <p class="note">Montants, conditions et rappel de décembre : <a href="/credit-impot-luxembourg">les crédits d'impôt 2026</a>.</p>
     </div>
   </div>
 </section>
@@ -276,7 +278,7 @@ function tablePage() {
   <div class="wrap">
     <div>
       <h2>Salaire net 2026</h2>
-      <p class="intro">Classe 1 : célibataire, ou frontalier marié sans taux global. Classe 2 : résident marié. Classe 1a : parent isolé, crédit d'impôt monoparental compris.</p>
+      <p class="intro">Classe 1 : célibataire, ou frontalier marié sans taux global. Classe 2 : résident marié. Classe 1a : parent isolé, <a href="/credit-impot-luxembourg#cim">crédit d'impôt monoparental</a> compris (sur la fiche d'un résident ; par la déclaration pour un frontalier).</p>
       ${LEAD}
     </div>
     <div>
@@ -403,7 +405,7 @@ function rembPage() {
   <div class="wrap">
     <div>
       <p class="eyebrow">Qui est concerné</p>
-      <h2 style="margin-top:12px">Les trois cas où un frontalier récupère de l'impôt</h2>
+      <h2 style="margin-top:12px">Les quatre cas où un frontalier récupère de l'impôt</h2>
     </div>
     <div class="txt">
       <h3>1. Vous êtes marié et votre conjoint gagne peu</h3>
@@ -412,6 +414,8 @@ function rembPage() {
       <p>Une fois assimilé, vous déduisez comme un résident : primes d'assurance et intérêts débiteurs, épargne-logement, prévoyance-vieillesse, intérêts d'emprunt de votre résidence principale, frais de garde. Le détail des plafonds est dans le <a href="/impot-frontalier#deductions">guide de la déclaration</a>.</p>
       <h3>3. Votre fiche ne tient pas compte de votre trajet réel</h3>
       <p>Le décompte annuel (163 NR) prend en compte les frais de déplacement selon la distance réelle domicile-travail, les frais d'obtention et les dépenses listées sur le formulaire.</p>
+      <h3>4. Vous élevez seul votre enfant</h3>
+      <p>Le <a href="/credit-impot-luxembourg#cim">crédit d'impôt monoparental</a> vaut jusqu'à ${f0(D.P.lu.cim.full)} € par an. Il n'est jamais versé sur la fiche de paie d'un frontalier : il faut être assimilé et le demander par la déclaration (modèle 100), celle de 2025 jusqu'au 31 décembre 2026.</p>
     </div>
   </div>
 </section>
@@ -562,7 +566,7 @@ ${rows.map(([s, a, b, c]) => `          <tr><td>${s}</td><td>${a}</td><td>${b}</
     <div>
       <p class="eyebrow">En euros</p>
       <h2 style="margin-top:12px">Le net selon la classe</h2>
-      <p class="intro">Net mensuel de novembre 2026, sans frais de déplacement. Classe 1a avec le crédit d'impôt monoparental.</p>
+      <p class="intro">Net mensuel de novembre 2026, sans frais de déplacement. Classe 1a avec le <a href="/credit-impot-luxembourg#cim">crédit d'impôt monoparental</a>, versé sur la fiche d'un résident et par la déclaration pour un frontalier.</p>
     </div>
     <div>
       <table class="ptable ex num">
@@ -924,6 +928,305 @@ ${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>
 ` + FOOT;
 }
 
+/* ------------------------------------------------------------------ crédits d'impôt 2026 */
+/* cellule vérifiée par calc.test.js : data-cr = cis | co2 | cissm | cic | tot, data-g = brut mensuel */
+const crOf = (g) => {
+  const cis = D.cisAnnual(g * 12) / 12, co2 = D.cico2Annual(g * 12) / 12, cissm = D.cissmMonthly(g), cic = D.cicMonthly(g);
+  return { cis, co2, cissm, cic, tot: cis + co2 + cissm + cic };
+};
+const crCell = (g, k, v) => `<td data-cr="${k}" data-g="${g}">${v > 0 ? f2(v) + " €" : "—"}</td>`;
+
+function creditPage() {
+  const url = "/credit-impot-luxembourg";
+  const a = crOf(3000), b = crOf(5000), top = crOf(15000);
+  const ssmq = SSMQ, cimFull = D.P.lu.cim.full;
+  const rows = [[1800], [2500], [SSM, "salaire minimum"], [3000], [ssmq, "minimum qualifié"], [3600], [4000], [4600], [5000], [6000], [6667], [8000], [10000], [15000]];
+  const title = "Crédit d'impôt Luxembourg 2026 : CIS, CO2, CISSM, conjoncture, monoparental";
+  const desc = `Les crédits d'impôt 2026 au Luxembourg : CIS jusqu'à 600 € par an, CI-CO2 216 €, CISSM 81 € par mois, crédit d'impôt conjoncture de juin à décembre 2026 (rappel en décembre), CIM jusqu'à ${f0(cimFull)} €. Calculateur et règles pour les frontaliers.`;
+  const q = [
+    ["Quels sont les crédits d'impôt au Luxembourg en 2026 ?", `Pour un salarié : le crédit d'impôt salarié (CIS, jusqu'à 600 € par an), le crédit d'impôt CO2 (216 € par an), le crédit d'impôt salaire social minimum (CISSM, 81 € par mois entre 1 800 et 3 000 € brut) et, de juin à décembre 2026, le crédit d'impôt conjoncture (jusqu'à 27,13 € par mois). Un parent isolé en classe 1a peut obtenir le crédit d'impôt monoparental, jusqu'à ${f0(cimFull)} € par an. Les retraités ont le CIP et le CI-CO2 pensionné.`],
+    ["Un frontalier a-t-il droit au crédit d'impôt salarié ?", "Oui. Le CIS, le CI-CO2, le CISSM et le crédit d'impôt conjoncture sont accordés à tout salarié dont le salaire est imposable au Luxembourg et qui est affilié à la sécurité sociale luxembourgeoise ou à celle d'un autre État lié par un accord, la France comprise. L'employeur les verse avec le salaire."],
+    ["Quand sera versé le crédit d'impôt conjoncture 2026 ?", "La loi a été votée le 28 octobre 2026, avec effet au 1er juin. D'après l'administration fiscale, les montants dus pour juin à octobre 2026 seront versés en une seule fois, au plus tard fin décembre 2026 ; ceux de novembre et décembre, chaque mois avec le salaire."],
+    ["Combien rapporte le crédit d'impôt conjoncture 2026 ?", `Il dépend du salaire brut mensuel : rien sous 1 125 €, ${f2(a.cic)} € par mois à 3 000 €, 22 € entre 4 600 et 9 500 €, 24 € entre 9 925 et 14 175 €, 27,13 € au-delà de 14 916 €. Sur les sept mois de juin à décembre, cela fait jusqu'à 189,91 €.`],
+    ["Un frontalier parent isolé peut-il avoir le crédit d'impôt monoparental ?", `Oui, s'il est assimilé à un résident (au moins 90 % des revenus du foyer imposables au Luxembourg, en règle générale), mais uniquement par une déclaration d'impôt (modèle 100) : le CIM n'est jamais versé sur la fiche de paie d'un non-résident. La déclaration de l'année 2025 peut être déposée jusqu'au 31 décembre 2026, pour jusqu'à ${f0(cimFull)} €.`],
+    ["Le CISSM augmente-t-il en 2027 ?", "Oui. La loi votée le 28 octobre 2026 le porte de 81 € à 179 € par mois de janvier à juin 2027, puis à 200 € à partir de juillet 2027, toujours entre 1 800 et 3 000 € brut et dégressif jusqu'à 3 600 €."],
+  ];
+  const r1 = (lab, cis, co2) => `<tr><td>${lab}</td><td>${cis}</td><td>${co2}</td></tr>`;
+  return head({ title, desc, url, jsonld: { "@context": "https://schema.org", "@graph": [article("Les crédits d'impôt au Luxembourg en 2026", url), crumbs([["brutnet.lu", "/"], ["Crédits d'impôt 2026", url]]), faq(q)] } }) + `
+<section class="hero sm">
+  <div class="wrap">
+    <p class="eyebrow">Crédits d'impôt · Luxembourg · année 2026 · mis à jour le 11 novembre 2026</p>
+    <h1 style="margin-top:18px">Crédits d'impôt au Luxembourg en 2026 : <mark>ce qu'ils ajoutent à votre net</mark>.</h1>
+    <p class="lede">Au Luxembourg, un crédit d'impôt ne fait pas que réduire l'impôt : il est <strong>versé avec le salaire</strong>, même si vous n'en payez pas. Frontalier ou résident, à 3 000 € brut ils ajoutent <strong>${f2(a.tot)} € par mois</strong> au net ; à 5 000 € brut, ${f2(b.tot)} €.</p>
+    <div class="callout" style="max-width:68ch;margin-top:26px">
+      <strong>Crédit d'impôt conjoncture :</strong> la loi a été votée le 28 octobre 2026, avec effet au 1<sup>er</sup> juin. Les montants de juin à octobre seront versés <strong>en une fois, au plus tard fin décembre 2026</strong> : 5 × 22 € = 110 € pour un salaire entre 4 600 et 9 500 € brut, jusqu'à 135,65 € au-delà de 14 916 €. <a href="#cic">Le barème</a>.
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="calcul">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Calculateur</p>
+      <h2 style="margin-top:12px">Vos crédits d'impôt 2026</h2>
+      <p class="intro">Barèmes officiels de l'administration des contributions directes et loi votée le 28 octobre 2026. Revenu brut mensuel régulier, sans 13ᵉ mois ni prime.</p>
+    </div>
+    <div>
+      <form class="form ttf" id="cr" onsubmit="return false">
+        <label>Vous êtes<select id="kSt"><option value="s" selected>Salarié</option><option value="p">Retraité (pension luxembourgeoise)</option></select></label>
+        <label>Revenu brut mensuel (€)<input id="kG" type="number" inputmode="decimal" min="0" step="50" value="3000"></label>
+        <label>Résidence<select id="kRes"><option value="NR" selected>Frontalier, non-résident</option><option value="R">Résident du Luxembourg</option></select></label>
+        <label>Foyer<select id="kFam"><option value="0" selected>Pas parent isolé</option><option value="1">Parent isolé, enfant à la maison (classe 1a)</option></select></label>
+      </form>
+      <table class="ptable ex num" style="margin-top:18px" aria-live="polite">
+        <thead><tr><th>Crédit</th><th>Par mois</th><th>Sur 2026</th></tr></thead>
+        <tbody id="kOut"></tbody>
+      </table>
+      <p class="note" id="kNote"></p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="montants">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Barème 2026</p>
+      <h2 style="margin-top:12px">Les crédits d'impôt selon le salaire</h2>
+      <p class="intro">Par mois, pour un salaire brut mensuel régulier sur toute l'année, en novembre 2026 : CIS et crédit CO2, CISSM, crédit d'impôt conjoncture (CIC). Mêmes montants pour un frontalier et un résident, quelle que soit la classe d'impôt.</p>
+    </div>
+    <div>
+      <div class="tscroll"><table class="ptable ex num">
+        <thead><tr><th>Brut / mois</th><th>CIS + CO2</th><th>CISSM</th><th>CIC</th><th>Total</th></tr></thead>
+        <tbody>
+${rows.map(([g, lab]) => { const c = crOf(g); return `          <tr><td>${gLabel(g)} €${lab ? ` <small>${lab}</small>` : ""}</td><td data-cr="cisco2" data-g="${g}">${c.cis + c.co2 > 0 ? f2(c.cis + c.co2) + " €" : "—"}</td>${crCell(g, "cissm", c.cissm)}${crCell(g, "cic", c.cic)}${crCell(g, "tot", c.tot)}</tr>`; }).join("\n")}
+        </tbody>
+      </table></div>
+      <p class="note">Le CIS et le CI-CO2 se calculent sur le salaire brut annuel : ils disparaissent à partir de 80 000 € par an, soit 6 667 € par mois. Le crédit d'impôt conjoncture ne court que de juin à décembre 2026. Ces crédits sont aussi intégrés aux <a href="/tableau-salaire-brut-net-luxembourg">nets du tableau brut → net</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="cis">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">CIS et CI-CO2</p>
+      <h2 style="margin-top:12px">Crédit d'impôt salarié et crédit CO2</h2>
+      <p class="intro">Pour tout salarié imposable au Luxembourg, frontaliers compris. Calculés sur le salaire brut annuel, versés chaque mois par l'employeur.</p>
+    </div>
+    <div>
+      <table class="ptable">
+        <thead><tr><th>Salaire brut annuel</th><th>CIS par an</th><th>CI-CO2 par an</th></tr></thead>
+        <tbody>
+          ${r1("moins de 936 €", "0", "0")}
+          ${r1("936 à 11 265 €", "300 + (brut − 936) × 0,029", "216 €")}
+          ${r1("11 266 à 40 000 €", "600 €", "216 €")}
+          ${r1("40 001 à 79 999 €", "600 − (brut − 40 000) × 0,015", "216 − (brut − 40 000) × 0,0054")}
+          ${r1("80 000 € et plus", "0", "0")}
+        </tbody>
+      </table>
+      <div class="txt" style="margin-top:18px">
+        <p>Conditions : un salaire <strong>imposable au Luxembourg</strong> et une affiliation personnelle à la sécurité sociale luxembourgeoise, ou à celle d'un autre État lié par un accord. Un frontalier affilié en France parce qu'il dépasse <a href="/teletravail-frontalier-luxembourg">25 % de télétravail</a> y a donc toujours droit tant que son salaire reste imposé au Luxembourg.</p>
+        <p>Un seul CIS et un seul CI-CO2 par personne, même avec plusieurs employeurs : ils figurent sur la fiche de retenue principale. Ils ne se cumulent pas avec les crédits des pensionnés ou des indépendants. Une année incomplète ou un salaire variable sont régularisés par le décompte annuel ou la déclaration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="cissm">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">CISSM</p>
+      <h2 style="margin-top:12px">Crédit d'impôt salaire social minimum</h2>
+      <p class="intro">81 € par mois autour du <a href="/salaire-minimum-luxembourg">salaire minimum</a>, en plus du CIS. Il passe à 179 € en janvier 2027 et à 200 € en juillet 2027.</p>
+    </div>
+    <div>
+      <table class="ptable">
+        <thead><tr><th>Salaire brut mensuel</th><th>CISSM 2026 par mois</th></tr></thead>
+        <tbody>
+          <tr><td>moins de 1 800 €</td><td>0</td></tr>
+          <tr><td>1 800 à 3 000 €</td><td>81 €</td></tr>
+          <tr><td>3 000 à 3 600 €</td><td>81 / 600 × (3 600 − brut), arrondi au cent supérieur</td></tr>
+          <tr><td>3 600 € et plus</td><td>0</td></tr>
+        </tbody>
+      </table>
+      <div class="txt" style="margin-top:18px">
+        <p>Au salaire minimum non qualifié (${f2(SSM)} € brut), le CISSM est de ${f2(D.cissmMonthly(SSM))} € ; au salaire minimum qualifié (${f2(ssmq)} €), de ${f2(D.cissmMonthly(ssmq))} €.</p>
+        <p>À temps partiel ou pour un mois incomplet, on calcule le salaire qu'on aurait touché à temps plein sur tout le mois, puis le CISSM est réduit au prorata des heures payées. Les revenus non périodiques ne comptent pas tant qu'ils ne dépassent pas 3 000 € sur l'année. Il faut une fiche de retenue d'impôt ; sans fiche, l'administration fiscale le verse sur demande après la fin de l'année.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="cic">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Crédit d'impôt conjoncture</p>
+      <h2 style="margin-top:12px">CIC 2026 : de juin à décembre 2026</h2>
+      <p class="intro">Il remplace, pour sept mois, l'adaptation du barème d'impôt à l'index de juin 2026, qui n'entrera en vigueur qu'en janvier 2027. C'est la moitié du crédit conjoncture de 2023.</p>
+    </div>
+    <div>
+      <table class="ptable">
+        <thead><tr><th>Salaire brut mensuel</th><th>CIC 2026 par mois</th></tr></thead>
+        <tbody>
+          <tr><td>moins de 1 125 €</td><td>0</td></tr>
+          <tr><td>1 125 à 1 250 €</td><td>(brut − 1 125) × 4/125 ÷ 2</td></tr>
+          <tr><td>1 250 à 2 100 €</td><td>[(brut − 1 250) × 3/850 + 4] ÷ 2</td></tr>
+          <tr><td>2 100 à 4 600 €</td><td>[(brut − 2 100) × 37/2 500 + 7] ÷ 2</td></tr>
+          <tr><td>4 600 à 9 500 €</td><td>22 €</td></tr>
+          <tr><td>9 500 à 9 925 €</td><td>[(brut − 9 500) × 4/425 + 44] ÷ 2</td></tr>
+          <tr><td>9 925 à 14 175 €</td><td>24 €</td></tr>
+          <tr><td>14 175 à 14 916 €</td><td>[(brut − 14 175) × 3/356 + 48] ÷ 2</td></tr>
+          <tr><td>plus de 14 916 €</td><td>27,13 €</td></tr>
+        </tbody>
+      </table>
+      <div class="txt" style="margin-top:18px">
+        <p>Montant arrondi au cent supérieur. Le brut mensuel comprend tous les éléments du mois, avantages en nature compris, mais pas les revenus non périodiques comme le 13ᵉ mois ou une prime, sauf s'ils remplacent une partie du salaire.</p>
+        <p><strong>Versement.</strong> L'employeur le verse avec le salaire si votre fiche de retenue porte l'inscription CIS, frontaliers compris. Comme la loi est arrivée en cours d'année, l'administration fiscale prévoit que les montants de juin à octobre 2026 soient versés <strong>en une seule fois, au plus tard fin décembre 2026</strong>. Sans fiche de retenue, il se demande à l'administration après la fin de l'année.</p>
+        <p><strong>Retraités et indépendants.</strong> Le CIC pensionné suit le même barème, sur la pension brute mensuelle. Les indépendants ont un CIC calculé sur le bénéfice net annuel, accordé uniquement par la déclaration. Les trois ne se cumulent pas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="cim">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">CIM</p>
+      <h2 style="margin-top:12px">Crédit d'impôt monoparental</h2>
+      <p class="intro">Jusqu'à ${f0(cimFull)} € par an pour un parent isolé en classe 1a, quel que soit le nombre d'enfants. C'est le crédit que les frontaliers oublient le plus.</p>
+    </div>
+    <div>
+      <table class="ptable">
+        <thead><tr><th>Revenu imposable ajusté</th><th>CIM par an</th></tr></thead>
+        <tbody>
+          <tr><td>moins de 60 000 €</td><td>${f0(cimFull)} €</td></tr>
+          <tr><td>60 000 à 105 000 €</td><td>${f0(cimFull)} − (revenu − 60 000) × 0,0612</td></tr>
+          <tr><td>plus de 105 000 €</td><td>750 €</td></tr>
+        </tbody>
+      </table>
+      <div class="txt" style="margin-top:18px">
+        <p><strong>Conditions :</strong> être en <a href="/classe-impot-luxembourg">classe 1a</a> et avoir dans son ménage au moins un enfant qui ouvre droit à la modération d'impôt pour enfant. Pas de CIM si les deux parents vivent ensemble avec l'enfant, pour une personne mariée ou qui se marie dans l'année, ni pour des partenaires imposés ensemble. Il est réduit de la moitié des pensions alimentaires et autres allocations reçues pour l'enfant au-delà de 2 712 € par an, les allocations familiales n'étant pas comptées.</p>
+        <p><strong>Résident :</strong> il peut être inscrit sur la fiche de retenue et versé chaque mois (${f2(cimFull / 12)} €), ou obtenu par le décompte annuel ou la déclaration.</p>
+        <p><strong>Frontalier :</strong> il faut être <strong>assimilé à un résident</strong>, et le CIM ne s'obtient <strong>que par la déclaration d'impôt</strong> (modèle 100), jamais sur la fiche de paie. La déclaration de l'année N se dépose jusqu'au 31 décembre de l'année N + 1 : <strong>pour 2025, jusqu'au 31 décembre 2026</strong>. Voir <a href="/remboursement-impot-luxembourg">le remboursement d'impôt</a>.</p>
+      </div>
+      ${LEAD}
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="frontalier">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Frontalier</p>
+      <h2 style="margin-top:12px">Ce qu'un frontalier touche, et comment</h2>
+      <p class="intro">Tous les crédits liés au salaire sont versés sur la fiche de paie d'un frontalier. Seul le CIM demande une démarche.</p>
+    </div>
+    <div>
+      <table class="ptable">
+        <thead><tr><th>Crédit</th><th>Frontalier</th><th>Résident</th></tr></thead>
+        <tbody>
+          <tr><td>CIS et CI-CO2</td><td>sur la fiche de paie</td><td>sur la fiche de paie</td></tr>
+          <tr><td>CISSM</td><td>sur la fiche de paie</td><td>sur la fiche de paie</td></tr>
+          <tr><td>Crédit conjoncture 2026</td><td>sur la fiche de paie, rappel au plus tard en décembre</td><td>sur la fiche de paie, rappel au plus tard en décembre</td></tr>
+          <tr><td>CIM (parent isolé)</td><td>par la déclaration seulement, si assimilé</td><td>sur la fiche ou par la déclaration</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Ces crédits ne changent rien à la déclaration française : le montant à reporter en cases 1AF et 8TK est le salaire brut moins les cotisations sociales. Voir <a href="/impot-frontalier">la déclaration d'impôts du frontalier</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="pensionnes">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Retraités</p>
+      <h2 style="margin-top:12px">CIP et CI-CO2 pensionné</h2>
+      <p class="intro">Pour une pension ou une rente imposable au Luxembourg. Mêmes montants que le crédit salarié, avec un minimum de 300 € dès 300 € de pension annuelle.</p>
+    </div>
+    <div>
+      <table class="ptable">
+        <thead><tr><th>Pension brute annuelle</th><th>CIP par an</th><th>CI-CO2 par an</th></tr></thead>
+        <tbody>
+          ${r1("moins de 300 €", "0", "0")}
+          ${r1("300 à 935 €", "300 €", "216 €")}
+          ${r1("936 à 11 265 €", "300 + (pension − 936) × 0,029", "216 €")}
+          ${r1("11 266 à 40 000 €", "600 €", "216 €")}
+          ${r1("40 001 à 79 999 €", "600 − (pension − 40 000) × 0,015", "216 − (pension − 40 000) × 0,0054")}
+          ${r1("80 000 € et plus", "0", "0")}
+        </tbody>
+      </table>
+      <p class="note">Le CIP ne se cumule pas avec le CIS : une personne qui touche un salaire et une pension n'a droit qu'à un seul des deux.</p>
+    </div>
+  </div>
+</section>
+
+<section class="prose" id="2027">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">2027</p>
+      <h2 style="margin-top:12px">Ce qui change au 1<sup>er</sup> janvier 2027</h2>
+      <p class="intro">Mesures de la loi votée le 28 octobre 2026 (accord tripartite du 8 juin 2026).</p>
+    </div>
+    <div class="txt">
+      <ul>
+        <li>Fin du <strong>crédit d'impôt conjoncture</strong> au 31 décembre 2026, remplacé par un <strong>barème d'impôt adapté d'une tranche indiciaire</strong> (tranches de revenu multipliées par 1,025).</li>
+        <li><strong>CISSM</strong> porté à 179 € par mois de janvier à juin 2027, puis à 200 € à partir de juillet 2027, avec une hausse structurelle de 3,8 % du salaire minimum en janvier 2027.</li>
+        <li><strong>Épargne-logement</strong> : plafond de déduction de 1 344 € par personne pour tous les âges, au lieu de 672 € après 40 ans.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="questions">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <div>
+${q.map(([x, y]) => `      <details><summary>${x}</summary><p>${y}</p></details>`).join("\n")}
+    </div>
+  </div>
+</section>
+
+<section class="prose">
+  <div class="wrap">
+    <div><p class="eyebrow">Sources</p></div>
+    <div class="txt"><p class="note"><a href="https://impotsdirects.public.lu/fr/az/c/credit-impot-salaries/cis2026.html" rel="noopener">ACD, CIS et CI-CO2 salarié 2026</a> · <a href="https://impotsdirects.public.lu/fr/az/c/CIP/cip2026.html" rel="noopener">ACD, CIP et CI-CO2 pensionné 2026</a> · <a href="https://impotsdirects.public.lu/fr/az/c/cim/cim2025.html" rel="noopener">ACD, crédit d'impôt monoparental</a> · <a href="https://impotsdirects.public.lu/fr/archive/newsletter/2026/nl301020261.html" rel="noopener">ACD, newsletter du 30 octobre 2026</a> · <a href="https://www.chd.lu/fr/dossier/8775" rel="noopener">Chambre des députés, projet de loi 8775</a> (CISSM, CIC 2026, épargne-logement) · <a href="https://wdocs-pub.chd.lu/docs/Dossiers_parlementaires/8775/20260622_Depot.pdf" rel="noopener">texte déposé et texte coordonné de l'article 139quater</a></p></div>
+  </div>
+</section>
+
+<script src="/calc.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var f=function(n){return n.toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2}).replace(/\\u202f/g,"\\u00a0")+"\\u00a0€"};
+  var tr=function(l,m,y,s){return "<tr><td>"+l+(s?"<small>"+s+"</small>":"")+"</td><td>"+m+"</td><td>"+y+"</td></tr>"};
+  function upd(){
+    var p=$("kSt").value==="p", g=Math.max(0,+$("kG").value||0), res=$("kRes").value, iso=$("kFam").value==="1";
+    var y=g*12, base=p?DC.cipAnnual(y):DC.cisAnnual(y), co2=p?DC.cico2PensionAnnual(y):DC.cico2Annual(y);
+    var cissm=p?0:DC.cissmMonthly(g), cic=DC.cicMonthly(g), h="", tot=base/12+co2/12+cissm+cic, note="";
+    var z=function(v,d){return v>0?f(v):"—"};
+    h+=tr(p?"Crédit d'impôt pensionné (CIP)":"Crédit d'impôt salarié (CIS)", z(base/12), z(base));
+    h+=tr("Crédit d'impôt CO2", z(co2/12), z(co2));
+    if(!p) h+=tr("Salaire social minimum (CISSM)", cissm>0?f(cissm):"—", cissm>0?f(cissm*12):"—", cissm>0?null:"entre 1\\u00a0800 et 3\\u00a0600\\u00a0€ brut");
+    h+=tr("Conjoncture (CIC)", cic>0?f(cic):"—", cic>0?f(cic*7):"—", cic>0?"juin à décembre ; juin-octobre versés en une fois : "+f(cic*5):"à partir de 1\\u00a0125\\u00a0€ brut");
+    if(iso){
+      var R=null, cim=null;
+      if(!p) R=DC.payslip(g,"1a",0,{}).annualR; else if(y<=60000) R=y;
+      if(R!==null) cim=DC.cimAnnual(R);
+      var lab="Monoparental (CIM)";
+      if(res==="R"){ if(cim!==null){ h+=tr(lab, f(cim/12), f(cim), "si inscrit sur la fiche, sinon par la déclaration"); tot+=cim/12; } else h+=tr(lab, "—", "750 à ${f0(cimFull)}\\u00a0€", "selon le revenu imposable"); }
+      else h+=tr(lab, "pas sur la fiche", cim!==null?f(cim):"750 à ${f0(cimFull)}\\u00a0€", "par la déclaration, si vous êtes assimilé");
+    }
+    h+='<tr class="total"><td><strong>Total versé chaque mois</strong></td><td><strong>'+f(tot)+'</strong></td><td></td></tr>';
+    $("kOut").innerHTML=h;
+    note = y>=80000 ? "À partir de 80\\u00a0000\\u00a0€ brut par an, il n'y a plus de "+(p?"CIP":"CIS")+" ni de CI-CO2." : (p ? "Le CISSM est réservé aux salariés." : "Calcul sur un salaire régulier : le CIS et le CI-CO2 sont régularisés sur le brut réel de l'année.");
+    $("kNote").textContent=note;
+  }
+  ["kSt","kG","kRes","kFam"].forEach(function(i){$(i).addEventListener("input",upd);$(i).addEventListener("change",upd)}); upd();
+})();
+</script>
+` + FOOT;
+}
+
 /* montants insécables : « 3 151,96 € » ne se coupe pas en fin de ligne */
 const nb = (html) => html.replace(/(\d) (?=\d{3}\b|€|%)/g, "$1\u00a0");
 
@@ -936,6 +1239,7 @@ fs.writeFileSync(path.join(ROOT, "remboursement-impot-luxembourg.html"), nb(remb
 fs.writeFileSync(path.join(ROOT, "classe-impot-luxembourg.html"), nb(classPage()));
 fs.writeFileSync(path.join(ROOT, "teletravail-frontalier-luxembourg.html"), nb(teleworkPage()));
 fs.writeFileSync(path.join(ROOT, "voiture-de-societe-luxembourg.html"), nb(carPage()));
+fs.writeFileSync(path.join(ROOT, "credit-impot-luxembourg.html"), nb(creditPage()));
 
 /* pages écrites à la main : on remplace seulement leur bloc <nav> par le menu commun */
 for (const [file, url] of [["index.html", "/"], ["impot-frontalier.html", "/impot-frontalier"], ["diagnostic.html", "/diagnostic"], ["mentions-legales.html", "/mentions-legales"]]) {
@@ -945,7 +1249,7 @@ for (const [file, url] of [["index.html", "/"], ["impot-frontalier.html", "/impo
   fs.writeFileSync(p, out);
 }
 
-const core = ["/", "/tableau-salaire-brut-net-luxembourg", "/salaire-minimum-luxembourg", "/impot-frontalier", "/remboursement-impot-luxembourg", "/classe-impot-luxembourg", "/teletravail-frontalier-luxembourg", "/voiture-de-societe-luxembourg", "/diagnostic"];
+const core = ["/", "/tableau-salaire-brut-net-luxembourg", "/salaire-minimum-luxembourg", "/impot-frontalier", "/remboursement-impot-luxembourg", "/classe-impot-luxembourg", "/teletravail-frontalier-luxembourg", "/voiture-de-societe-luxembourg", "/credit-impot-luxembourg", "/diagnostic"];
 const urls = [...core, ...AMOUNTS.map(slugOf)];
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

@@ -185,5 +185,41 @@ console.log('--- Pages générées (tools/gen-pages.js) = moteur');
   if (n < 200) { fails++; console.log('ÉCHEC  seulement ' + n + ' montants trouvés dans les pages générées'); }
   console.log('ok     ' + n + ' montants dans ' + files.length + ' pages générées');
 }
+
+console.log('--- Crédits d\'impôt 2026 : formules de la loi et page /credit-impot-luxembourg');
+{
+  const fs = require('fs'), path = require('path');
+  const fmt = n => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/\u202f/g, ' ');
+  /* CIC salarié 2026, art. 154sexdecies (texte voté le 28.10.2026), arrondi au cent supérieur */
+  near('CIC 1 200 € : (75 × 4/125) / 2', DC.cicMonthly(1200, '2026-11-15'), 1.2, 1e-9);
+  near('CIC 2 771,33 € (SSM) : [(671,33 × 37/2 500) + 7] / 2 = 8,4678 → 8,47', DC.cicMonthly(2771.33, '2026-11-15'), 8.47, 1e-9);
+  near('CIC 3 000 € : [(900 × 37/2 500) + 7] / 2', DC.cicMonthly(3000, '2026-11-15'), 10.16, 1e-9);
+  near('CIC 5 000 € : 22 €', DC.cicMonthly(5000, '2026-11-15'), 22, 1e-9);
+  near('CIC 14 916 € : [(741 × 3/356) + 48] / 2 = 27,122 → 27,13', DC.cicMonthly(14916, '2026-11-15'), 27.13, 1e-9);
+  near('CIC 20 000 € : plafond 27,13 €', DC.cicMonthly(20000, '2026-11-15'), 27.13, 1e-9);
+  near('CIC hors période (mai 2026)', DC.cicMonthly(5000, '2026-05-31'), 0, 1e-9);
+  near('CIC hors période (janvier 2027)', DC.cicMonthly(5000, '2027-01-01'), 0, 1e-9);
+  /* CISSM, art. 139quater : arrondi au cent supérieur */
+  near('CISSM 3 325,60 € : 81/600 × 274,40 = 37,044 → 37,05', DC.cissmMonthly(3325.6), 37.05, 1e-9);
+  near('CISSM 3 500 € : exemple ACD 13,50 €', DC.cissmMonthly(3500), 13.5, 1e-9);
+  /* CIP et CI-CO2 pensionné 2026 (ACD) */
+  near('CIP 500 € par an : minimum 300 €', DC.cipAnnual(500), 300, 1e-9);
+  near('CIP 50 000 € : 600 − 10 000 × 0,015', DC.cipAnnual(50000), 450, 1e-9);
+  near('CI-CO2 pensionné 50 000 € : 216 − 10 000 × 0,0054', DC.cico2PensionAnnual(50000), 162, 1e-9);
+  near('CIP 80 000 € : 0', DC.cipAnnual(80000), 0, 1e-9);
+  const page = fs.readFileSync(path.join(__dirname, 'credit-impot-luxembourg.html'), 'utf8');
+  let n = 0;
+  [...page.matchAll(/data-cr="(\w+)" data-g="([\d.]+)">([^<]+)</g)].forEach(m => {
+    n++;
+    const g = +m[2], y = g * 12;
+    const v = { cisco2: DC.cisAnnual(y) / 12 + DC.cico2Annual(y) / 12, cissm: DC.cissmMonthly(g), cic: DC.cicMonthly(g) };
+    v.tot = v.cisco2 + v.cissm + v.cic;
+    const want = v[m[1]] > 0 ? fmt(v[m[1]]) + ' €' : '—';
+    const shown = m[3].replace(/\u00a0/g, ' ');
+    if (want !== shown) { fails++; console.log('ÉCHEC  crédit ' + m[1] + ' à ' + g + ' € : page ' + shown + ', moteur ' + want); }
+  });
+  if (n < 50) { fails++; console.log('ÉCHEC  seulement ' + n + ' cellules de crédits trouvées'); }
+  console.log('ok     ' + n + ' cellules du tableau des crédits');
+}
 console.log(fails ? ('\n' + fails + ' ÉCHEC(S)') : '\nTous les contrôles passent.');
 process.exit(fails ? 1 : 0);
