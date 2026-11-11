@@ -74,7 +74,9 @@ module.exports = async (req, res) => {
   let d = req.body;
   if (typeof d === "string") { try { d = JSON.parse(d); } catch { d = null; } }
   if (!d || typeof d !== "object") return res.status(400).json({ ok: false, error: "Requête invalide." });
-  if (d.website) return res.status(200).json({ ok: true });                       // champ piège rempli : robot
+  /* champ piège (ancien nom « website », nouveau « hp ») : le remplissage automatique de Safari peut le remplir.
+     On n'écarte donc pas la demande : le lead part quand même, marqué « [Robot ?] », sans e-mail au visiteur. */
+  const bot = !!(d.website || d.hp);
 
   const ip = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim() || "?";
   if (limited(ip)) return res.status(429).json({ ok: false, error: "Trop de demandes, réessayez dans quelques minutes." });
@@ -113,17 +115,19 @@ module.exports = async (req, res) => {
   const foot = `brutnet.lu · MALAUTO SAS · 5 rue de la Tour, 57100 Thionville · <a href="${SITE}/mentions-legales#confidentialite" style="color:#5B6475">Confidentialité</a>`;
 
   try {
-    await mailer().sendMail({
+    const sent = await mailer().sendMail({
       from, to, replyTo: `${name} <${email}>`,
-      subject: `Nouveau lead brutnet.lu : ${name}, ${when}`,
+      subject: `${bot ? "[Robot ?] " : ""}Nouveau lead brutnet.lu : ${name}, ${when}`,
       text: leadRows.map(([k, v]) => `${k} : ${v}`).join("\n"),
       html: layout(`Nouveau lead : ${esc(name)}`, leadRows.map(([k, v]) => row(k, v)).join(""),
         `<p style="margin:0">À rappeler le <b>${esc(when)}</b> au <a href="tel:${esc(phone.replace(/[^\d+]/g, ""))}">${esc(phone)}</a>. « Répondre » écrit directement à ${esc(first)}.</p>`, "Reçu depuis le formulaire du diagnostic brutnet.lu."),
     });
+    console.log(JSON.stringify({ evt: "lead", bot, smtp: String(sent && sent.response || "").slice(0, 80) }));   // sans données personnelles
   } catch (e) {
     console.error("lead", e && e.message);
     return res.status(502).json({ ok: false, error: "L'envoi n'a pas abouti. Réessayez dans un instant." });
   }
+  if (bot) return res.status(200).json({ ok: true });
 
   try {
     await mailer().sendMail({
@@ -144,6 +148,7 @@ module.exports = async (req, res) => {
 <p style="margin:16px 0 0;font-weight:700">Le résumé de votre pré-diagnostic</p>`,
         `Estimations établies avec les barèmes officiels 2026. Pour l'appel, gardez votre dernière fiche de paie et, si vous l'avez, votre relevé de carrière. Pour changer d'horaire ou annuler, répondez à cet e-mail.<br><br>${foot}`),
     });
+    console.log(JSON.stringify({ evt: "confirmation", ok: true }));
   } catch (e) {
     console.error("confirmation", e && e.message);           // le lead est parti : on ne bloque pas le visiteur
   }

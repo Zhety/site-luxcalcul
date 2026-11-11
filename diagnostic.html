@@ -301,7 +301,7 @@
                 <input id="fPhone" type="tel" placeholder="Téléphone" autocomplete="tel" required>
               </div>
               <input id="fMail" type="email" placeholder="E-mail (confirmation et rappel)" autocomplete="email" required>
-              <input id="fWeb" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+              <input id="zq" type="text" name="zq_ref" tabindex="-1" autocomplete="new-password" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
               <p class="err" id="fErr">Il manque le créneau, le nom, le téléphone ou un e-mail valide.</p>
               <label class="consent"><input id="fConsent" type="checkbox" required><span>J'accepte que brutnet.lu utilise mes réponses et mes coordonnées pour me rappeler à propos de mon diagnostic. Aucune revente ; suppression sur simple demande à info@brutnet.lu. <a href="/mentions-legales#confidentialite" target="_blank">Politique de confidentialité</a>.</span></label>
             </form>
@@ -697,7 +697,7 @@
     var iso = day.getFullYear()+"-"+String(day.getMonth()+1).padStart(2,"0")+"-"+String(day.getDate()).padStart(2,"0");
     return {
       name: $("fName").value.trim(), phone: $("fPhone").value.trim(), email: $("fMail").value.trim(),
-      website: $("fWeb").value, consent: true, day: iso, slot: S.slot,
+      hp: $("zq").value, consent: true, day: iso, slot: S.slot,
       answers: input(),
       results: { netMonthly: Math.round(d.payslip.net), classNow: String(t.clsNow), pensionAt65: Math.round(d.pension.totalAt65),
                  taxGainYear: Math.round(t.gainDeclare + t.gainMortgage), taxGainWithSavings: Math.round(t.gainTotal),
